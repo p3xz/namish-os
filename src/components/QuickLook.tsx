@@ -42,6 +42,7 @@ function TextPreview({ docKey }: { docKey: string }) {
 function ProjectPreview({ id }: { id: string }) {
   const project = projects.find((p) => p.id === id)
   if (!project) return <p className="p-6 text-[13px] text-neutral-400">Project not found.</p>
+  const d = project.details
   return (
     <div className="selectable min-h-full bg-white p-6">
       <div className="flex items-start gap-4">
@@ -94,6 +95,56 @@ function ProjectPreview({ id }: { id: string }) {
           </a>
         )}
       </div>
+
+      <Section title="What it is">
+        {d.overview.map((p, i) => (
+          <p key={i} className="mb-3 text-[13.5px] leading-relaxed text-neutral-700">
+            {p}
+          </p>
+        ))}
+      </Section>
+
+      <Section title="What it does">
+        <ul className="space-y-1.5">
+          {d.features.map((f, i) => (
+            <li key={i} className="flex gap-2 text-[13.5px] leading-relaxed text-neutral-700">
+              <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-neutral-400" />
+              {f}
+            </li>
+          ))}
+        </ul>
+      </Section>
+
+      <Section title="What it uses, and why">
+        <div className="space-y-3">
+          {d.stack.map((s, i) => (
+            <div key={i}>
+              <p className="text-[13.5px] font-semibold text-neutral-900">{s.tech}</p>
+              <p className="mt-0.5 text-[13px] leading-relaxed text-neutral-600">{s.why}</p>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      <Section title="How it works">
+        {d.howItWorks.map((p, i) => (
+          <p key={i} className="mb-3 text-[13.5px] leading-relaxed text-neutral-700">
+            <span className="mr-2 font-semibold text-neutral-400">{i + 1}.</span>
+            {p}
+          </p>
+        ))}
+      </Section>
+    </div>
+  )
+}
+
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="mt-7 border-t border-black/[0.07] pt-5">
+      <h3 className="mb-3 text-[11px] font-bold uppercase tracking-[0.08em] text-neutral-400">
+        {title}
+      </h3>
+      {children}
     </div>
   )
 }

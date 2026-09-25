@@ -39,7 +39,7 @@ const HELP: Line[] = [
 ]
 
 const WELCOME: Line[] = [
-  { kind: 'out', text: 'NamishOS Terminal — zsh', tone: 'success' },
+  { kind: 'out', text: 'NamishOS Terminal (zsh)', tone: 'success' },
   { kind: 'out', text: 'Type "help" to see what I can do.', tone: 'muted' },
 ]
 
@@ -109,7 +109,7 @@ export default function TerminalApp({ winId }: { winId: string }) {
         push([
           out('Projects:', 'muted'),
           ...projects.flatMap((p): Line[] => [
-            out(`  ${p.name} — ${p.tagline}`, 'default'),
+            out(`  ${p.name}: ${p.tagline}`, 'default'),
             out(`    ${p.stack.join(' · ')}  (${p.year}, ${p.category})`, 'muted'),
           ]),
         ])

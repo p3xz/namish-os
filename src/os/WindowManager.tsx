@@ -69,7 +69,7 @@ function titleFor(app: AppId, opts?: OpenAppOptions): string {
       return p.length > 0 ? p[p.length - 1] : 'Home'
     }
     case 'terminal':
-      return 'namish — zsh'
+      return 'namish - zsh'
     case 'web':
       return 'Web'
     case 'messages':

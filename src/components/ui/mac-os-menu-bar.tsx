@@ -295,7 +295,7 @@ function BatteryPopover() {
         </div>
       </div>
       <div className="mt-2 text-[12.5px] text-neutral-500">Power Source: Power Adapter</div>
-      <div className="mt-1 text-[11px] text-neutral-400">Prototype — mock status for now</div>
+      <div className="mt-1 text-[11px] text-neutral-400">Prototype: mock status for now</div>
     </div>
   )
 }
@@ -360,7 +360,7 @@ function WifiPopover() {
             </button>
           ))}
           <div className="mt-2 border-t border-black/5 px-1 pt-2 text-[11px] text-neutral-400">
-            Prototype — mock networks for now
+            Prototype: mock networks for now
           </div>
         </div>
       ) : (
