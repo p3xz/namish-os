@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { WindowManagerProvider, type PowerAction } from './os/WindowManager'
+import { AppearanceProvider } from './os/Appearance'
 import BootScreen from './components/BootScreen'
 import Desktop from './components/Desktop'
 import NLogo from './components/NLogo'
@@ -18,17 +19,19 @@ export default function App() {
 
   return (
     <WindowManagerProvider powerAction={powerAction}>
-      <AnimatePresence>
-        {phase === 'boot' && <BootScreen key="boot" onDone={() => setPhase('desktop')} />}
-      </AnimatePresence>
+      <AppearanceProvider>
+        <AnimatePresence>
+          {phase === 'boot' && <BootScreen key="boot" onDone={() => setPhase('desktop')} />}
+        </AnimatePresence>
 
-      {(phase === 'desktop' || phase === 'sleep') && <Desktop />}
+        {(phase === 'desktop' || phase === 'sleep') && <Desktop />}
 
-      <AnimatePresence>
-        {phase === 'sleep' && <SleepOverlay key="sleep" onWake={() => setPhase('desktop')} />}
-      </AnimatePresence>
+        <AnimatePresence>
+          {phase === 'sleep' && <SleepOverlay key="sleep" onWake={() => setPhase('desktop')} />}
+        </AnimatePresence>
 
-      {phase === 'shutdown' && <ShutdownScreen onPower={() => setPhase('boot')} />}
+        {phase === 'shutdown' && <ShutdownScreen onPower={() => setPhase('boot')} />}
+      </AppearanceProvider>
     </WindowManagerProvider>
   )
 }
