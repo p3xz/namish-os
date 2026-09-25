@@ -3,6 +3,7 @@ import { Folder } from 'lucide-react'
 import Wallpaper from './Wallpaper'
 import MenuBar from './MenuBar'
 import Dock from './Dock'
+import WindowLayer from './WindowLayer'
 import { desktopFolders } from '@/os/filesystem'
 import { useWindows } from '@/os/WindowManager'
 
@@ -11,9 +12,9 @@ export default function Desktop() {
     <div className="fixed inset-0 overflow-hidden">
       <Wallpaper />
       <DesktopIcons />
+      <WindowLayer />
       <MenuBar />
       <Dock />
-      {/* Window layer arrives in the next commit */}
     </div>
   )
 }
