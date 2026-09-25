@@ -50,7 +50,7 @@ function DesktopIcons() {
             setSelected(name)
             openFolder(name)
           }}
-          className="flex w-[92px] flex-col items-center gap-1 rounded-xl px-1 py-2.5"
+          className="flex w-[92px] flex-col items-center gap-1 rounded-xl px-1 py-2.5 transition-transform duration-150 hover:-translate-y-0.5 active:translate-y-0 active:scale-95"
         >
           <span
             className={`rounded-xl p-1 transition-colors ${

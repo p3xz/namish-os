@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { Minus, Plus, X } from 'lucide-react'
 import type { ReactNode } from 'react'
+import { useState } from 'react'
 import { useWindows } from '@/os/WindowManager'
 import type { OSWindow } from '@/os/types'
 
@@ -46,12 +47,14 @@ export default function WindowFrame({
   children: ReactNode
 }) {
   const { closeWindow, minimizeWindow, toggleMaximize, focusWindow, moveWindow } = useWindows()
+  const [dragging, setDragging] = useState(false)
 
   const onTitlePointerDown = (e: React.PointerEvent) => {
     if ((e.target as HTMLElement).closest('[data-traffic]')) return
     if ((e.target as HTMLElement).closest('button')) return
     focusWindow(win.id)
     if (win.maximized) return
+    setDragging(true)
     const startX = e.clientX
     const startY = e.clientY
     const origX = win.bounds.x
@@ -62,6 +65,7 @@ export default function WindowFrame({
       moveWindow(win.id, nx, ny)
     }
     const onUp = () => {
+      setDragging(false)
       window.removeEventListener('pointermove', onMove)
       window.removeEventListener('pointerup', onUp)
     }
@@ -74,23 +78,44 @@ export default function WindowFrame({
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.9, y: 16 }}
-      animate={
-        win.minimized
-          ? { opacity: 0, scale: 0.05, y: minimizeY, transition: { duration: 0.28, ease: 'easeIn' } }
-          : { opacity: 1, scale: 1, y: 0, transition: { type: 'spring', stiffness: 380, damping: 34 } }
-      }
-      exit={{ opacity: 0, scale: 0.92, y: 12, transition: { duration: 0.16, ease: 'easeIn' } }}
-      style={{
-        left: win.bounds.x,
-        top: win.bounds.y,
+      initial={{
+        opacity: 0,
+        scale: 0.9,
+        x: win.bounds.x,
+        y: win.bounds.y + 16,
         width: win.bounds.w,
         height: win.bounds.h,
+      }}
+      animate={
+        win.minimized
+          ? {
+              opacity: 0,
+              scale: 0.05,
+              x: win.bounds.x,
+              y: minimizeY,
+              width: win.bounds.w,
+              height: win.bounds.h,
+              transition: { duration: 0.28, ease: 'easeIn' },
+            }
+          : {
+              opacity: 1,
+              scale: 1,
+              x: win.bounds.x,
+              y: win.bounds.y,
+              width: win.bounds.w,
+              height: win.bounds.h,
+              transition: dragging
+                ? { duration: 0 }
+                : { type: 'spring', stiffness: 420, damping: 38 },
+            }
+      }
+      exit={{ opacity: 0, scale: 0.92, transition: { duration: 0.15, ease: 'easeIn' } }}
+      style={{
         zIndex: win.z,
         transformOrigin: '50% 100%',
         pointerEvents: win.minimized ? 'none' : 'auto',
       }}
-      className={`absolute flex flex-col overflow-hidden rounded-xl border backdrop-blur-2xl ${
+      className={`absolute left-0 top-0 flex flex-col overflow-hidden rounded-xl border backdrop-blur-2xl ${
         dark
           ? 'border-white/15 bg-[#232328]/90 shadow-[0_24px_80px_rgba(0,0,0,0.55)]'
           : 'border-black/15 bg-[#f2f2f4]/90 shadow-[0_24px_80px_rgba(0,0,0,0.35)]'

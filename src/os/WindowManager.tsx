@@ -25,6 +25,8 @@ interface WindowManagerCtx {
   activeApp: AppId
   topWindow: OSWindow | null
   powerAction: (a: PowerAction) => void
+  /** Set when a brand-new window is launched (not on focus). Dock bounces the icon. */
+  lastLaunch: { dockId: string; at: number } | null
 }
 
 const Ctx = createContext<WindowManagerCtx | null>(null)
@@ -37,6 +39,15 @@ export function useWindows() {
 
 /** Apps that only ever have one window open at a time. */
 const SINGLETONS: AppId[] = ['terminal', 'web', 'messages', 'notes', 'about', 'settings', 'ai']
+
+/** Which dock icon represents a freshly launched app. */
+function dockIdForLaunch(app: AppId, opts?: OpenAppOptions): string | null {
+  if (app === 'files') return opts?.folderPath?.[0] === 'Projects' ? 'projects' : 'files'
+  if (app === 'quicklook') return 'files'
+  if (app === 'terminal' || app === 'web' || app === 'messages' || app === 'notes' || app === 'ai')
+    return app
+  return null
+}
 
 const DEFAULT_SIZE: Record<AppId, { w: number; h: number }> = {
   files: { w: 820, h: 520 },
@@ -114,6 +125,7 @@ export function WindowManagerProvider({
 }) {
   const [windows, setWindows] = useState<OSWindow[]>([])
   const [finderView, setFinderView] = useState<FinderView>('icons')
+  const [lastLaunch, setLastLaunch] = useState<{ dockId: string; at: number } | null>(null)
   const zRef = useRef(10)
   const idRef = useRef(0)
 
@@ -146,6 +158,8 @@ export function WindowManagerProvider({
         quickLook: app === 'quicklook' ? opts?.quickLook : undefined,
       }
       setWindows((ws) => [...ws, win])
+      const dockId = dockIdForLaunch(app, opts)
+      if (dockId) setLastLaunch({ dockId, at: Date.now() })
     },
     [windows, focusWindow],
   )
@@ -214,6 +228,7 @@ export function WindowManagerProvider({
     activeApp,
     topWindow,
     powerAction,
+    lastLaunch,
   }
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>

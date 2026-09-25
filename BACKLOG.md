@@ -14,7 +14,7 @@ One item ships per daily commit. Every item below is a genuine, noticeable featu
 
 ## Finder and files
 
-- [ ] Minimize/maximize animations: macOS-style genie effect when a window minimizes into the Dock, and a smooth scale animation when it restores
+- [ ] Genie minimize effect: true macOS-style genie animation when a window minimizes into the Dock (smooth scale minimize/restore already ships)
 - [ ] Finder gallery view: a third view mode with large previews alongside the file list
 - [ ] Finder search: filter the current folder's contents from the toolbar
 - [ ] Right-click context menus: on the desktop (change wallpaper, open Terminal here) and on files (Open, Quick Look, Copy link)
@@ -24,6 +24,7 @@ One item ships per daily commit. Every item below is a genuine, noticeable featu
 
 ## Customization and system
 
+- [ ] System themes: light, dark, and accent-color themes for the menu bar, windows, and Dock, switchable from Settings
 - [ ] Custom wallpaper upload: use your own image as the desktop background, persisted in localStorage
 - [ ] Battery popover: the menu bar battery icon shows the real charge level via the Battery API when available
 - [ ] Sound effects: subtle clicks on window open/close and a boot chime, with a mute toggle in Settings

@@ -44,7 +44,7 @@ export const projects: Project[] = [
     name: 'Rideoxy',
     tagline: 'Motorcycle telemetry in your pocket',
     description:
-      'A motorcycle telemetry mobile app. It records ride data, draws routes on offline-friendly maps and keeps everything stored locally on the device.',
+      'Motorcycle telemetry app with offline maps and local ride storage.',
     stack: ['React Native', 'Expo', 'MapLibre', 'SQLite'],
     year: '2026',
     category: 'Mobile',
@@ -56,7 +56,7 @@ export const projects: Project[] = [
     name: 'InsidCode',
     tagline: 'Competitive programming, made social',
     description:
-      'A competitive programming platform with live 1v1 coding duels, Elo ranks and 330+ problems. Built with Next.js 15, a Monaco editor and the OnlineCompiler API.',
+      '1v1 coding duels, Elo ranks, and 330+ problems.',
     stack: ['Next.js 15', 'Monaco', 'OnlineCompiler API'],
     year: '2026',
     category: 'Full-Stack Web',
@@ -67,7 +67,7 @@ export const projects: Project[] = [
     name: 'GymSync',
     tagline: 'Your workouts, even offline',
     description:
-      'An offline-first fitness tracker that runs entirely in the browser. Log sets, track progress and never lose data to a bad connection.',
+      'Offline-first workout tracker that lives entirely in your browser.',
     stack: ['Vanilla JS'],
     year: '2026',
     category: 'Client-Side Engineering',
@@ -77,7 +77,7 @@ export const projects: Project[] = [
     name: 'GitHub Stats Discord Bot',
     tagline: 'Your GitHub grind, as a Discord command',
     description:
-      'A Discord bot that pulls GitHub statistics through the GraphQL API and renders them right inside your server.',
+      'GitHub stats delivered as Discord commands.',
     stack: ['Java 17', 'JDA 5', 'GitHub GraphQL'],
     year: '2026',
     category: 'Backend Engineering',
@@ -87,7 +87,7 @@ export const projects: Project[] = [
     name: 'Infernified',
     tagline: 'Know if your password has leaked',
     description:
-      'A password security analyzer that checks breaches without ever sending your password anywhere, using k-anonymity and the Web Crypto API.',
+      'Password breach checker that never sends your password anywhere.',
     stack: ['Web Crypto API', 'k-anonymity'],
     year: '2026',
     category: 'Cybersecurity',
@@ -101,7 +101,7 @@ export const experience: ExperienceEntry[] = [
     company: 'Rideoxy',
     year: '2026',
     description:
-      'Designed and built a motorcycle telemetry mobile app with React Native and Expo. Offline map rendering with MapLibre and local persistence with SQLite.',
+      'Built a motorcycle telemetry app with React Native and Expo: offline MapLibre maps, local SQLite storage.',
   },
   {
     id: 'insidcode',
@@ -109,7 +109,7 @@ export const experience: ExperienceEntry[] = [
     company: 'InsidCode',
     year: '2026',
     description:
-      'Designed and built a competitive programming platform with Next.js 15 and the Monaco editor, powered by the OnlineCompiler API. Shipped live 1v1 coding duels, Elo ranks and 330+ problems.',
+      'Built a competitive programming platform with Next.js 15 and Monaco: 1v1 duels, Elo ranks, 330+ problems.',
   },
 ]
 

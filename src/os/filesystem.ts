@@ -43,10 +43,92 @@ const aboutBody = [
   `X: ${profile.x}`,
 ].join('\n')
 
+const privacyBody = [
+  'Privacy Policy',
+  '',
+  'Last updated: September 2026',
+  '',
+  'NamishOS is a personal portfolio. It does not collect, store, or sell your personal data.',
+  '',
+  '- No accounts, no tracking pixels, no analytics beacons.',
+  '- Your notes and settings (like your wallpaper choice) are saved only in your own',
+  "  browser's localStorage. They never leave your device.",
+  '- The Messages app replies are scripted locally in your browser. Nothing you type',
+  '  is sent to any server by this site.',
+  '- External links (GitHub, X, email) open third-party sites, which have their own',
+  '  privacy policies.',
+  '',
+  'Questions: nam4sh@gmail.com',
+].join('\n')
+
+const termsBody = [
+  'Terms of Use',
+  '',
+  'Last updated: September 2026',
+  '',
+  'By using this site you agree to the following:',
+  '',
+  '1. This is a personal portfolio and interactive demo. Content is provided as-is,',
+  '   with no warranties.',
+  '2. You may browse, share links, and read the code for learning. Please do not',
+  '   scrape aggressively or hammer the site with automated requests.',
+  '3. Project write-ups describe my own work. Trademarks and product names belong',
+  '   to their respective owners.',
+  '4. External sites linked here are not under my control and their own terms apply.',
+  '',
+  'Questions: nam4sh@gmail.com',
+].join('\n')
+
+const cookiesBody = [
+  'Cookie Policy',
+  '',
+  'Last updated: September 2026',
+  '',
+  'Short version: this site does not use tracking cookies.',
+  '',
+  '- No advertising cookies, no analytics cookies, and no third-party cookies are',
+  '  set by this site.',
+  "- A small amount of data (your wallpaper choice, your notes) is kept in your",
+  '  browser\'s localStorage so the site remembers your preferences. It stays on',
+  '  your device and is never sent anywhere.',
+  '- Clearing your browser storage resets everything. Nothing is synced to a server.',
+  '',
+  'Questions: nam4sh@gmail.com',
+].join('\n')
+
+const legalBody = [
+  'Legal Notice',
+  '',
+  'Last updated: September 2026',
+  '',
+  'Not a defamation statement. Nothing on this site is intended to defame,',
+  'disparage, or harm any person, company, or product. All project descriptions',
+  'describe my own original work and my own experience building it.',
+  '',
+  'Copyright and intellectual property:',
+  '- All code, text, artwork, icons, and wallpapers on this site are original',
+  '  creations by Namish Yadav, unless clearly credited otherwise.',
+  '- The macOS-inspired look is an homage built from scratch. No Apple software,',
+  '  artwork, or assets are used. This site is not affiliated with or endorsed by',
+  '  Apple Inc. macOS and Apple are trademarks of Apple Inc.',
+  '- Project names, company names, and product names mentioned belong to their',
+  '  respective owners and are used only to describe my work.',
+  '',
+  'Good-faith notice: if you believe anything here infringes your rights or',
+  'misrepresents you, email nam4sh@gmail.com and it will be reviewed and fixed',
+  'promptly.',
+  '',
+  'This page is a good-faith statement, not legal advice.',
+].join('\n')
+
 /** Named text documents addressable by ref. */
 export const textDocs: Record<string, TextDoc> = {
   about: { title: 'about.txt', body: aboutBody },
   contact: { title: 'contact.txt', body: contactBody },
+  privacy: { title: 'privacy.txt', body: privacyBody },
+  terms: { title: 'terms.txt', body: termsBody },
+  cookies: { title: 'cookies.txt', body: cookiesBody },
+  legal: { title: 'legal.txt', body: legalBody },
   trash: {
     title: 'readme.txt',
     body: 'Trash is empty.\n\nYou clean up after yourself. Respect.',
@@ -128,6 +210,16 @@ export const homeFolder: FSFolder = {
       name: 'Contact',
       type: 'folder',
       children: [{ name: 'contact.txt', type: 'file', kind: 'text', ref: 'contact' }],
+    },
+    {
+      name: 'Legal',
+      type: 'folder',
+      children: [
+        { name: 'privacy.txt', type: 'file', kind: 'text', ref: 'privacy' },
+        { name: 'terms.txt', type: 'file', kind: 'text', ref: 'terms' },
+        { name: 'cookies.txt', type: 'file', kind: 'text', ref: 'cookies' },
+        { name: 'legal.txt', type: 'file', kind: 'text', ref: 'legal' },
+      ],
     },
   ],
 }

@@ -148,7 +148,7 @@ function dockIdForApp(app: string): string | null {
 }
 
 export default function Dock() {
-  const { windows, openApp } = useWindows()
+  const { windows, openApp, lastLaunch } = useWindows()
 
   const apps = useMemo(() => DOCK_APPS, [])
 
@@ -188,7 +188,7 @@ export default function Dock() {
 
   return (
     <div className="fixed bottom-3 left-1/2 z-[150] -translate-x-1/2">
-      <MacOSDock apps={apps} onAppClick={handleAppClick} openApps={openApps} />
+      <MacOSDock apps={apps} onAppClick={handleAppClick} openApps={openApps} launchSignal={lastLaunch ? { id: lastLaunch.dockId, at: lastLaunch.at } : null} />
     </div>
   )
 }

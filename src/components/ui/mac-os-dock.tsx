@@ -13,6 +13,8 @@ interface MacOSDockProps {
   apps: DockApp[];
   onAppClick: (appId: string) => void;
   openApps?: string[];
+  /** When set/changed, the matching icon does a macOS-style launch bounce. */
+  launchSignal?: { id: string; at: number } | null;
   className?: string;
 }
 
@@ -20,6 +22,7 @@ const MacOSDock: React.FC<MacOSDockProps> = ({
   apps,
   onAppClick,
   openApps = [],
+  launchSignal = null,
   className = ''
 }) => {
   const [mouseX, setMouseX] = useState<number | null>(null);
@@ -206,8 +209,7 @@ const MacOSDock: React.FC<MacOSDockProps> = ({
     }, 200);
   };
 
-  const handleAppClick = (appId: string, index: number) => {
-    if (iconRefs.current[index]) {
+  const handleAppClick = (appId: string, index: number) => {    if (iconRefs.current[index]) {
       if (typeof window !== 'undefined' && (window as any).gsap) {
         const gsap = (window as any).gsap;
         const bounceHeight = currentScales[index] > 1.3 ? -baseIconSize * 0.2 : -baseIconSize * 0.15;
@@ -227,6 +229,36 @@ const MacOSDock: React.FC<MacOSDockProps> = ({
 
     onAppClick(appId);
   };
+
+  // macOS-style launch bounce when an app is opened from anywhere
+  // (N menu, desktop, Spotlight-style flows) — not just dock clicks.
+  useEffect(() => {
+    if (!launchSignal) return
+    const index = apps.findIndex((a) => a.id === launchSignal.id)
+    const el = index >= 0 ? iconRefs.current[index] : null
+    if (!el) return
+    let hops = 0
+    let cancelled = false
+    const hop = () => {
+      if (cancelled || hops >= 2) {
+        el.style.transform = 'translateY(0px)'
+        return
+      }
+      hops += 1
+      el.style.transition = 'transform 0.22s ease-out'
+      el.style.transform = `translateY(${-baseIconSize * 0.45}px)`
+      setTimeout(() => {
+        if (cancelled) return
+        el.style.transition = 'transform 0.18s ease-in'
+        el.style.transform = 'translateY(0px)'
+        setTimeout(hop, 180)
+      }, 220)
+    }
+    hop()
+    return () => {
+      cancelled = true
+    }
+  }, [launchSignal, apps, baseIconSize])
 
   // Calculate content width
   const contentWidth = currentPositions.length > 0

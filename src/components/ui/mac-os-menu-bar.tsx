@@ -174,7 +174,7 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({ isOpen, onClose, items, pos
  */
 
 const POPOVER_CARD =
-  'macos-popover absolute top-9 z-[300] w-72 overflow-hidden rounded-2xl border border-black/10 bg-white/85 shadow-[0_12px_40px_rgba(0,0,0,0.25)] backdrop-blur-2xl'
+  'macos-popover macos-popover-enter absolute top-9 z-[300] w-72 overflow-hidden rounded-2xl border border-black/10 bg-white/85 shadow-[0_12px_40px_rgba(0,0,0,0.25)] backdrop-blur-2xl'
 
 // --- Calendar popover -------------------------------------------------------
 
