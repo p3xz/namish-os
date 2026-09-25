@@ -51,6 +51,19 @@ export const textDocs: Record<string, TextDoc> = {
     title: 'readme.txt',
     body: 'Trash is empty.\n\nYou clean up after yourself. Respect.',
   },
+  help: {
+    title: 'NamishOS Help',
+    body: [
+      'NamishOS Help',
+      '',
+      'Double-click a folder on the desktop (or in Files) to open it.',
+      'Drag any window by its title bar to move it.',
+      'Traffic lights: red closes, yellow minimizes, green zooms.',
+      'Click a Dock icon to launch its app. Running apps get a dot.',
+      'Type "help" inside Terminal for a list of commands.',
+      'View menu switches Files between icon and list view.',
+    ].join('\n'),
+  },
 }
 
 for (const g of skillGroups) {
