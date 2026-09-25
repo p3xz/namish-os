@@ -1,3 +1,16 @@
+import {
+  Code2,
+  Folder,
+  Globe,
+  Info,
+  MessageCircle,
+  Moon,
+  NotebookPen,
+  Power,
+  RotateCcw,
+  Settings as SettingsIcon,
+  SquareTerminal,
+} from 'lucide-react'
 import MacOSMenuBar from './ui/mac-os-menu-bar'
 import { useWindows } from '@/os/WindowManager'
 import type { AppId } from '@/os/types'
@@ -12,6 +25,26 @@ const APP_NAMES: Record<AppId, string> = {
   settings: 'NamishOS',
   quicklook: 'Preview',
 }
+
+const icon = (Icon: typeof Folder) => <Icon size={15} strokeWidth={2} />
+
+/** N menu: everything in the OS is reachable from here. */
+const N_MENU = [
+  { label: 'About NamishOS', action: 'about', icon: icon(Info) },
+  { type: 'separator' as const },
+  { label: 'System Settings...', action: 'settings', icon: icon(SettingsIcon) },
+  { type: 'separator' as const },
+  { label: 'Files', action: 'open-files', icon: icon(Folder) },
+  { label: 'Projects', action: 'open-projects', icon: icon(Code2) },
+  { label: 'Terminal', action: 'open-terminal', icon: icon(SquareTerminal) },
+  { label: 'Web', action: 'open-web', icon: icon(Globe) },
+  { label: 'Messages', action: 'open-messages', icon: icon(MessageCircle) },
+  { label: 'Notes', action: 'open-notes', icon: icon(NotebookPen) },
+  { type: 'separator' as const },
+  { label: 'Sleep', action: 'sleep', icon: icon(Moon) },
+  { label: 'Restart...', action: 'restart', icon: icon(RotateCcw) },
+  { label: 'Shut Down...', action: 'shutdown', icon: icon(Power) },
+]
 
 export default function MenuBar() {
   const {
@@ -34,6 +67,24 @@ export default function MenuBar() {
         break
       case 'settings':
         openApp('settings')
+        break
+      case 'open-files':
+        openApp('files', { folderPath: [] })
+        break
+      case 'open-projects':
+        openApp('files', { folderPath: ['Projects'] })
+        break
+      case 'open-terminal':
+        openApp('terminal')
+        break
+      case 'open-web':
+        openApp('web')
+        break
+      case 'open-messages':
+        openApp('messages')
+        break
+      case 'open-notes':
+        openApp('notes')
         break
       case 'sleep':
         powerAction('sleep')
@@ -73,5 +124,5 @@ export default function MenuBar() {
     }
   }
 
-  return <MacOSMenuBar appName={APP_NAMES[activeApp]} onMenuAction={handleAction} />
+  return <MacOSMenuBar appName={APP_NAMES[activeApp]} nMenuItems={N_MENU} onMenuAction={handleAction} />
 }

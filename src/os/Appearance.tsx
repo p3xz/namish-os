@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, type ReactNode } from 'react'
 
-export type WallpaperVariant = 'nebula' | 'sunset' | 'ocean'
+export type WallpaperVariant = 'tide' | 'drift' | 'ember'
 
 interface AppearanceCtx {
   variant: WallpaperVariant
@@ -16,6 +16,6 @@ export function useAppearance() {
 }
 
 export function AppearanceProvider({ children }: { children: ReactNode }) {
-  const [variant, setVariant] = useState<WallpaperVariant>('nebula')
+  const [variant, setVariant] = useState<WallpaperVariant>('tide')
   return <Ctx.Provider value={{ variant, setVariant }}>{children}</Ctx.Provider>
 }

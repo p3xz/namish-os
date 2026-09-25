@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useRef, useCallback } from 'react'
+import React, { useState, useEffect, useRef, useCallback, type ReactNode } from 'react'
 import { BatteryMedium, Wifi } from 'lucide-react'
 import NLogo from '@/components/NLogo'
 
@@ -9,6 +9,7 @@ interface MenuItemOption {
   label?: string
   action?: string
   shortcut?: string
+  icon?: ReactNode
   type?: 'item' | 'separator'
 }
 
@@ -20,6 +21,7 @@ interface MenuConfig {
 interface MacOSMenuBarProps {
   appName?: string
   menus?: MenuConfig[]
+  nMenuItems?: MenuItemOption[]
   onMenuAction?: (action: string) => void
   className?: string
 }
@@ -135,7 +137,7 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({ isOpen, onClose, items, pos
           return (
             <div
               key={index}
-              className="mx-1.5 flex cursor-pointer items-center justify-between rounded-md px-3.5 py-1 text-[13.5px] text-neutral-800 transition-colors duration-100 hover:bg-[#0a84ff] hover:text-white"
+              className="group mx-1.5 flex cursor-pointer items-center justify-between rounded-md px-3 py-1 text-[13.5px] text-neutral-800 transition-colors duration-100 hover:bg-[#0a84ff] hover:text-white"
               onClick={() => {
                 if (item.action) {
                   onAction?.(item.action)
@@ -143,9 +145,18 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({ isOpen, onClose, items, pos
                 onClose()
               }}
             >
-              <span className="flex items-center">{item.label}</span>
+              <span className="flex items-center gap-2.5">
+                {item.icon && (
+                  <span className="flex w-4 justify-center text-neutral-500 group-hover:text-white">
+                    {item.icon}
+                  </span>
+                )}
+                <span className="flex items-center">{item.label}</span>
+              </span>
               {item.shortcut && (
-                <span className="ml-6 text-xs text-neutral-400">{item.shortcut}</span>
+                <span className="ml-6 text-xs text-neutral-400 group-hover:text-white/80">
+                  {item.shortcut}
+                </span>
               )}
             </div>
           )
@@ -164,6 +175,7 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({ isOpen, onClose, items, pos
 const MacOSMenuBar: React.FC<MacOSMenuBarProps> = ({
   appName = 'Files',
   menus = DEFAULT_MENUS,
+  nMenuItems = N_MENU_ITEMS,
   onMenuAction,
   className = '',
 }) => {
@@ -297,7 +309,7 @@ const MacOSMenuBar: React.FC<MacOSMenuBarProps> = ({
       <MenuDropdown
         isOpen={activeMenu === 'nmenu'}
         onClose={closeDropdown}
-        items={N_MENU_ITEMS}
+        items={nMenuItems}
         position={dropdownPosition}
         onAction={handleMenuAction}
       />

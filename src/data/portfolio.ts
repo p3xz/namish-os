@@ -26,7 +26,7 @@ export const profile = {
   email: 'nam4sh@gmail.com',
   github: 'https://github.com/p3xz',
   x: 'https://x.com/NamishYadavv',
-  website: 'https://insidcode.vercel.app',
+  website: 'https://namishhh.vercel.app',
   portfolio: 'https://namishhh.vercel.app',
   avatar: 'https://namishhh.vercel.app/pfp.jpg',
 }

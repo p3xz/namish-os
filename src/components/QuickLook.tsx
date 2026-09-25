@@ -103,7 +103,7 @@ function ContactPreview() {
     { label: 'Email', value: profile.email, href: `mailto:${profile.email}` },
     { label: 'GitHub', value: 'github.com/p3xz', href: profile.github },
     { label: 'X', value: '@NamishYadavv', href: profile.x },
-    { label: 'Website', value: 'insidcode.vercel.app', href: profile.website },
+    { label: 'Website', value: 'namishhh.vercel.app', href: profile.website },
     { label: 'Portfolio', value: 'namishhh.vercel.app', href: profile.portfolio },
   ]
   return (

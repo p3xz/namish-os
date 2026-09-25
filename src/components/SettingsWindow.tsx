@@ -1,26 +1,8 @@
 import { Check } from 'lucide-react'
 import { useAppearance, type WallpaperVariant } from '@/os/Appearance'
+import { WALLPAPER_IMAGES, WALLPAPER_META } from './Wallpaper'
 
-const VARIANTS: { id: WallpaperVariant; name: string; swatch: string; blurb: string }[] = [
-  {
-    id: 'nebula',
-    name: 'Nebula',
-    swatch: 'linear-gradient(135deg, #3f8fe8, #ff5d5d)',
-    blurb: 'The default. Red waves over a blue sky.',
-  },
-  {
-    id: 'sunset',
-    name: 'Ember',
-    swatch: 'linear-gradient(135deg, #f7b733, #e63e6d)',
-    blurb: 'Golden hour, all day.',
-  },
-  {
-    id: 'ocean',
-    name: 'Abyss',
-    swatch: 'linear-gradient(135deg, #43cea2, #1d6fb8)',
-    blurb: 'Deep water focus mode.',
-  },
-]
+const VARIANTS: WallpaperVariant[] = ['tide', 'drift', 'ember']
 
 export default function SettingsWindow() {
   const { variant, setVariant } = useAppearance()
@@ -31,25 +13,28 @@ export default function SettingsWindow() {
       <p className="mt-1 text-[12.5px] text-neutral-500">Pick a wallpaper. It changes instantly.</p>
 
       <div className="mt-4 space-y-2">
-        {VARIANTS.map((v) => {
-          const active = variant === v.id
+        {VARIANTS.map((id) => {
+          const active = variant === id
+          const meta = WALLPAPER_META[id]
           return (
             <button
-              key={v.id}
-              onClick={() => setVariant(v.id)}
+              key={id}
+              onClick={() => setVariant(id)}
               className={`flex w-full items-center gap-4 rounded-2xl border p-3 text-left transition-all ${
                 active
                   ? 'border-sky-500/60 bg-sky-50'
                   : 'border-black/10 bg-black/[0.02] hover:bg-black/[0.05]'
               }`}
             >
-              <div
-                className="h-12 w-20 shrink-0 rounded-xl border border-black/10 shadow-inner"
-                style={{ background: v.swatch }}
+              <img
+                src={WALLPAPER_IMAGES[id]}
+                alt={meta.name}
+                draggable={false}
+                className="h-12 w-20 shrink-0 rounded-xl border border-black/10 object-cover shadow-inner"
               />
               <div className="min-w-0 flex-1">
-                <div className="text-[14px] font-semibold text-neutral-900">{v.name}</div>
-                <div className="truncate text-[12px] text-neutral-500">{v.blurb}</div>
+                <div className="text-[14px] font-semibold text-neutral-900">{meta.name}</div>
+                <div className="truncate text-[12px] text-neutral-500">{meta.blurb}</div>
               </div>
               {active && (
                 <span className="flex size-6 items-center justify-center rounded-full bg-sky-500">
