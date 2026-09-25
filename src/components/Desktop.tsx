@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Folder } from 'lucide-react'
 import Wallpaper from './Wallpaper'
 import MenuBar from './MenuBar'
+import Dock from './Dock'
 import { desktopFolders } from '@/os/filesystem'
 import { useWindows } from '@/os/WindowManager'
 
@@ -11,7 +12,8 @@ export default function Desktop() {
       <Wallpaper />
       <DesktopIcons />
       <MenuBar />
-      {/* Window layer and Dock arrive in later commits */}
+      <Dock />
+      {/* Window layer arrives in the next commit */}
     </div>
   )
 }
