@@ -4,6 +4,8 @@ import type { ReactNode } from 'react'
 import { useWindows } from '@/os/WindowManager'
 import type { OSWindow } from '@/os/types'
 
+export type WindowTone = 'light' | 'dark'
+
 function TrafficButton({
   color,
   hoverBg,
@@ -34,7 +36,15 @@ function TrafficButton({
   )
 }
 
-export default function WindowFrame({ win, children }: { win: OSWindow; children: ReactNode }) {
+export default function WindowFrame({
+  win,
+  tone = 'light',
+  children,
+}: {
+  win: OSWindow
+  tone?: WindowTone
+  children: ReactNode
+}) {
   const { closeWindow, minimizeWindow, toggleMaximize, focusWindow, moveWindow } = useWindows()
 
   const onTitlePointerDown = (e: React.PointerEvent) => {
@@ -60,6 +70,7 @@ export default function WindowFrame({ win, children }: { win: OSWindow; children
   }
 
   const minimizeY = typeof window === 'undefined' ? 600 : window.innerHeight - win.bounds.y
+  const dark = tone === 'dark'
 
   return (
     <motion.div
@@ -79,12 +90,18 @@ export default function WindowFrame({ win, children }: { win: OSWindow; children
         transformOrigin: '50% 100%',
         pointerEvents: win.minimized ? 'none' : 'auto',
       }}
-      className="absolute flex flex-col overflow-hidden rounded-xl border border-white/15 bg-[#232328]/90 shadow-[0_24px_80px_rgba(0,0,0,0.55)] backdrop-blur-2xl"
+      className={`absolute flex flex-col overflow-hidden rounded-xl border backdrop-blur-2xl ${
+        dark
+          ? 'border-white/15 bg-[#232328]/90 shadow-[0_24px_80px_rgba(0,0,0,0.55)]'
+          : 'border-black/15 bg-[#f2f2f4]/90 shadow-[0_24px_80px_rgba(0,0,0,0.35)]'
+      }`}
       onPointerDown={() => focusWindow(win.id)}
     >
       {/* Title bar */}
       <div
-        className="relative flex h-11 shrink-0 touch-none items-center border-b border-white/10 bg-white/[0.06]"
+        className={`relative flex h-11 shrink-0 touch-none items-center border-b ${
+          dark ? 'border-white/10 bg-white/[0.06]' : 'border-black/10 bg-white/40'
+        }`}
         onPointerDown={onTitlePointerDown}
         onDoubleClick={() => toggleMaximize(win.id)}
       >
@@ -100,7 +117,13 @@ export default function WindowFrame({ win, children }: { win: OSWindow; children
           </TrafficButton>
         </div>
         <div className="pointer-events-none mx-auto flex max-w-[60%] items-center gap-2">
-          <span className="truncate text-[13px] font-semibold text-white/90">{win.title}</span>
+          <span
+            className={`truncate text-[13px] font-semibold ${
+              dark ? 'text-white/90' : 'text-neutral-800'
+            }`}
+          >
+            {win.title}
+          </span>
         </div>
       </div>
 

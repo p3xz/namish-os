@@ -2,7 +2,7 @@ export type AppId =
   | 'files'
   | 'terminal'
   | 'web'
-  | 'mail'
+  | 'messages'
   | 'notes'
   | 'about'
   | 'quicklook'

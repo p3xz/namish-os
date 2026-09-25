@@ -36,13 +36,13 @@ export function useWindows() {
 }
 
 /** Apps that only ever have one window open at a time. */
-const SINGLETONS: AppId[] = ['terminal', 'web', 'mail', 'notes', 'about', 'settings']
+const SINGLETONS: AppId[] = ['terminal', 'web', 'messages', 'notes', 'about', 'settings']
 
 const DEFAULT_SIZE: Record<AppId, { w: number; h: number }> = {
-  files: { w: 780, h: 480 },
+  files: { w: 820, h: 520 },
   terminal: { w: 660, h: 430 },
   web: { w: 820, h: 540 },
-  mail: { w: 640, h: 500 },
+  messages: { w: 760, h: 520 },
   notes: { w: 440, h: 440 },
   about: { w: 500, h: 400 },
   settings: { w: 580, h: 430 },
@@ -59,8 +59,8 @@ function titleFor(app: AppId, opts?: OpenAppOptions): string {
       return 'namish — zsh'
     case 'web':
       return 'Web'
-    case 'mail':
-      return 'Mail'
+    case 'messages':
+      return 'Messages'
     case 'notes':
       return 'Notes'
     case 'about':

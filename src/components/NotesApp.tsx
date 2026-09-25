@@ -20,11 +20,11 @@ const NOTES = [
 
 export default function NotesApp() {
   return (
-    <div className="grid min-h-0 flex-1 content-start grid-cols-1 gap-4 overflow-y-auto bg-black/30 p-5 sm:grid-cols-2">
+    <div className="grid min-h-0 flex-1 content-start grid-cols-1 gap-4 overflow-y-auto bg-[#f6f6f8] p-5 sm:grid-cols-2">
       {NOTES.map((n) => (
         <div
           key={n.title}
-          className={`relative rounded-lg bg-gradient-to-br p-4 pt-8 shadow-[0_10px_30px_rgba(0,0,0,0.35)] ${n.color}`}
+          className={`relative rounded-lg bg-gradient-to-br p-4 pt-8 shadow-[0_10px_30px_rgba(0,0,0,0.18)] ${n.color}`}
         >
           <Pin size={16} className="absolute left-1/2 top-2 -translate-x-1/2 text-black/40" />
           <h3 className="text-[14px] font-bold text-black/80">{n.title}</h3>

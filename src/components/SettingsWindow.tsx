@@ -5,19 +5,19 @@ const VARIANTS: { id: WallpaperVariant; name: string; swatch: string; blurb: str
   {
     id: 'nebula',
     name: 'Nebula',
-    swatch: 'linear-gradient(135deg, #38bdf8, #a855f7, #f472b6)',
-    blurb: 'The default. Cyan auroras over deep indigo.',
+    swatch: 'linear-gradient(135deg, #3f8fe8, #ff5d5d)',
+    blurb: 'The default. Red waves over a blue sky.',
   },
   {
     id: 'sunset',
     name: 'Ember',
-    swatch: 'linear-gradient(135deg, #fb923c, #f43f5e, #a855f7)',
+    swatch: 'linear-gradient(135deg, #f7b733, #e63e6d)',
     blurb: 'Golden hour, all day.',
   },
   {
     id: 'ocean',
     name: 'Abyss',
-    swatch: 'linear-gradient(135deg, #38bdf8, #2dd4bf, #2563eb)',
+    swatch: 'linear-gradient(135deg, #43cea2, #1d6fb8)',
     blurb: 'Deep water focus mode.',
   },
 ]
@@ -26,9 +26,9 @@ export default function SettingsWindow() {
   const { variant, setVariant } = useAppearance()
 
   return (
-    <div className="min-h-0 flex-1 overflow-y-auto bg-black/30 p-5">
-      <h2 className="text-[15px] font-semibold text-white">Appearance</h2>
-      <p className="mt-1 text-[12.5px] text-white/45">Pick a wallpaper. It changes instantly.</p>
+    <div className="min-h-0 flex-1 overflow-y-auto bg-white p-5">
+      <h2 className="text-[15px] font-semibold text-neutral-900">Appearance</h2>
+      <p className="mt-1 text-[12.5px] text-neutral-500">Pick a wallpaper. It changes instantly.</p>
 
       <div className="mt-4 space-y-2">
         {VARIANTS.map((v) => {
@@ -39,17 +39,17 @@ export default function SettingsWindow() {
               onClick={() => setVariant(v.id)}
               className={`flex w-full items-center gap-4 rounded-2xl border p-3 text-left transition-all ${
                 active
-                  ? 'border-sky-400/60 bg-white/[0.08]'
-                  : 'border-white/10 bg-white/[0.04] hover:bg-white/[0.07]'
+                  ? 'border-sky-500/60 bg-sky-50'
+                  : 'border-black/10 bg-black/[0.02] hover:bg-black/[0.05]'
               }`}
             >
               <div
-                className="h-12 w-20 shrink-0 rounded-xl border border-white/20 shadow-inner"
+                className="h-12 w-20 shrink-0 rounded-xl border border-black/10 shadow-inner"
                 style={{ background: v.swatch }}
               />
               <div className="min-w-0 flex-1">
-                <div className="text-[14px] font-semibold text-white">{v.name}</div>
-                <div className="truncate text-[12px] text-white/50">{v.blurb}</div>
+                <div className="text-[14px] font-semibold text-neutral-900">{v.name}</div>
+                <div className="truncate text-[12px] text-neutral-500">{v.blurb}</div>
               </div>
               {active && (
                 <span className="flex size-6 items-center justify-center rounded-full bg-sky-500">
@@ -61,7 +61,7 @@ export default function SettingsWindow() {
         })}
       </div>
 
-      <p className="mt-6 text-center text-[11.5px] text-white/30">NamishOS Settings · Version 26</p>
+      <p className="mt-6 text-center text-[11.5px] text-neutral-300">NamishOS Settings · Version 26</p>
     </div>
   )
 }

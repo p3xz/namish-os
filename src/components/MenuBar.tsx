@@ -6,7 +6,7 @@ const APP_NAMES: Record<AppId, string> = {
   files: 'Files',
   terminal: 'Terminal',
   web: 'Web',
-  mail: 'Mail',
+  messages: 'Messages',
   notes: 'Notes',
   about: 'NamishOS',
   settings: 'NamishOS',

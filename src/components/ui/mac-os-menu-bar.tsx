@@ -111,31 +111,31 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({ isOpen, onClose, items, pos
   return (
     <div
       ref={dropdownRef}
-      className="menu-dropdown-enter absolute z-[60] backdrop-blur-md"
+      className="menu-dropdown-enter absolute z-[60] backdrop-blur-xl"
       style={{
         left: `${position.x}px`,
         top: `${position.y}px`,
-        background: 'rgba(40, 40, 40, 0.75)',
-        border: '1px solid rgba(255, 255, 255, 0.18)',
-        borderRadius: '8px',
+        background: 'rgba(246, 246, 248, 0.86)',
+        border: '1px solid rgba(0, 0, 0, 0.12)',
+        borderRadius: '10px',
         boxShadow: `
-          0 8px 32px rgba(0, 0, 0, 0.4),
-          0 2px 8px rgba(0, 0, 0, 0.3),
-          inset 0 1px 0 rgba(255, 255, 255, 0.12)
+          0 12px 40px rgba(0, 0, 0, 0.25),
+          0 2px 8px rgba(0, 0, 0, 0.15),
+          inset 0 1px 0 rgba(255, 255, 255, 0.7)
         `,
-        minWidth: '220px',
+        minWidth: '230px',
       }}
     >
-      <div className="py-1">
+      <div className="py-1.5">
         {items.map((item, index) => {
           if (item.type === 'separator') {
-            return <div key={index} className="mx-2 my-1 h-px bg-white/15" />
+            return <div key={index} className="mx-3 my-1.5 h-px bg-black/10" />
           }
 
           return (
             <div
               key={index}
-              className="flex cursor-pointer items-center justify-between px-4 py-1 text-sm text-white transition-colors duration-100 hover:bg-white/10"
+              className="mx-1.5 flex cursor-pointer items-center justify-between rounded-md px-3.5 py-1 text-[13.5px] text-neutral-800 transition-colors duration-100 hover:bg-[#0a84ff] hover:text-white"
               onClick={() => {
                 if (item.action) {
                   onAction?.(item.action)
@@ -144,7 +144,9 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({ isOpen, onClose, items, pos
               }}
             >
               <span className="flex items-center">{item.label}</span>
-              {item.shortcut && <span className="ml-4 text-xs text-white/60">{item.shortcut}</span>}
+              {item.shortcut && (
+                <span className="ml-6 text-xs text-neutral-400">{item.shortcut}</span>
+              )}
             </div>
           )
         })}
@@ -156,9 +158,8 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({ isOpen, onClose, items, pos
 /**
  * NamishOS Menu Bar
  *
- * A desktop-style menu bar with glassmorphic design, live clock,
- * and customizable menus. Adapted from a macOS-style component;
- * all branding is original NamishOS artwork.
+ * Light translucent macOS-style menu bar with live clock and app menus.
+ * All branding is original NamishOS artwork.
  */
 const MacOSMenuBar: React.FC<MacOSMenuBarProps> = ({
   appName = 'Files',
@@ -241,12 +242,12 @@ const MacOSMenuBar: React.FC<MacOSMenuBarProps> = ({
   return (
     <div className={`fixed inset-x-0 top-0 z-[200] ${className}`} style={{ position: 'fixed' }}>
       <div
-        className="backdrop-blur-md"
+        className="backdrop-blur-xl"
         style={{
-          height: '32px',
-          background: 'rgba(30, 30, 34, 0.55)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-          boxShadow: '0 1px 12px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.08)',
+          height: '30px',
+          background: 'rgba(250, 250, 252, 0.62)',
+          borderBottom: '1px solid rgba(0, 0, 0, 0.08)',
+          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.5)',
         }}
       >
         <div className="flex h-full items-center justify-between px-4">
@@ -255,13 +256,13 @@ const MacOSMenuBar: React.FC<MacOSMenuBarProps> = ({
             <div
               ref={nLogoRef}
               onClick={handleNMenuClick}
-              className="cursor-pointer transition-opacity duration-150 hover:opacity-80"
+              className="cursor-pointer transition-opacity duration-150 hover:opacity-75"
               title="NamishOS"
             >
-              <NLogo size={18} />
+              <NLogo size={17} />
             </div>
 
-            <span className="text-sm font-semibold text-white">{appName}</span>
+            <span className="text-[13.5px] font-bold text-neutral-900">{appName}</span>
 
             <div className="hidden items-center space-x-5 sm:flex">
               {menus.map((menu) => (
@@ -270,7 +271,11 @@ const MacOSMenuBar: React.FC<MacOSMenuBarProps> = ({
                   ref={(el) => {
                     menuRefs.current[menu.label] = el
                   }}
-                  className="cursor-pointer select-none text-[13px] text-white/90 transition-opacity duration-150 hover:opacity-70"
+                  className={`cursor-pointer select-none rounded px-1 text-[13px] transition-colors duration-150 ${
+                    activeMenu === menu.label
+                      ? 'bg-black/10 text-neutral-900'
+                      : 'text-neutral-800 hover:bg-black/[0.06]'
+                  }`}
                   onClick={() => handleMenuItemClick(menu.label)}
                 >
                   {menu.label}
@@ -280,10 +285,10 @@ const MacOSMenuBar: React.FC<MacOSMenuBarProps> = ({
           </div>
 
           {/* Right section - status icons and clock */}
-          <div className="flex items-center space-x-4">
-            <BatteryMedium size={22} className="text-white/90" strokeWidth={1.5} />
-            <Wifi size={15} className="text-white/90" strokeWidth={2} />
-            <span className="select-none text-[13px] font-medium text-white/90">{currentTime}</span>
+          <div className="flex items-center space-x-3.5">
+            <BatteryMedium size={22} className="text-neutral-800" strokeWidth={1.5} />
+            <Wifi size={14} className="text-neutral-800" strokeWidth={2.2} />
+            <span className="select-none text-[13px] font-medium text-neutral-800">{currentTime}</span>
           </div>
         </div>
       </div>
