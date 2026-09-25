@@ -46,16 +46,9 @@ body {
   background: transparent;
 }
 
-/* ---------- NamishOS wallpaper: original aurora gradient ---------- */
-.wallpaper-base {
-  background:
-    radial-gradient(1100px 750px at 12% 8%, rgba(56, 189, 248, 0.5), transparent 62%),
-    radial-gradient(1000px 700px at 88% 18%, rgba(168, 85, 247, 0.52), transparent 62%),
-    radial-gradient(950px 950px at 72% 92%, rgba(244, 114, 182, 0.42), transparent 64%),
-    radial-gradient(850px 650px at 18% 88%, rgba(52, 211, 153, 0.32), transparent 62%),
-    radial-gradient(700px 500px at 50% 45%, rgba(99, 102, 241, 0.35), transparent 65%),
-    linear-gradient(155deg, #0a0f28 0%, #171036 42%, #2a0f45 78%, #12081f 100%);
-}
+/* ---------- NamishOS wallpaper ----------
+   Base gradients live in the Wallpaper component so variants can switch;
+   drifting blobs and grain are defined below. */
 
 .aurora-blob {
   position: absolute;
