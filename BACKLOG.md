@@ -14,6 +14,7 @@ One item ships per daily commit. Every item below is a genuine, noticeable featu
 
 ## Finder and files
 
+- [ ] Minimize/maximize animations: macOS-style genie effect when a window minimizes into the Dock, and a smooth scale animation when it restores
 - [ ] Finder gallery view: a third view mode with large previews alongside the file list
 - [ ] Finder search: filter the current folder's contents from the toolbar
 - [ ] Right-click context menus: on the desktop (change wallpaper, open Terminal here) and on files (Open, Quick Look, Copy link)

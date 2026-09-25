@@ -8,6 +8,7 @@ import {
   NotebookPen,
   Power,
   RotateCcw,
+  Sparkles,
   Settings as SettingsIcon,
   SquareTerminal,
 } from 'lucide-react'
@@ -24,6 +25,7 @@ const APP_NAMES: Record<AppId, string> = {
   about: 'NamishOS',
   settings: 'NamishOS',
   quicklook: 'Preview',
+  ai: 'AI',
 }
 
 const icon = (Icon: typeof Folder) => <Icon size={15} strokeWidth={2} />
@@ -39,6 +41,7 @@ const N_MENU = [
   { label: 'Terminal', action: 'open-terminal', icon: icon(SquareTerminal) },
   { label: 'Web', action: 'open-web', icon: icon(Globe) },
   { label: 'Messages', action: 'open-messages', icon: icon(MessageCircle) },
+  { label: 'AI', action: 'open-ai', icon: icon(Sparkles) },
   { label: 'Notes', action: 'open-notes', icon: icon(NotebookPen) },
   { type: 'separator' as const },
   { label: 'Sleep', action: 'sleep', icon: icon(Moon) },
@@ -82,6 +85,9 @@ export default function MenuBar() {
         break
       case 'open-messages':
         openApp('messages')
+        break
+      case 'open-ai':
+        openApp('ai')
         break
       case 'open-notes':
         openApp('notes')

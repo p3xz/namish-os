@@ -36,7 +36,7 @@ export function useWindows() {
 }
 
 /** Apps that only ever have one window open at a time. */
-const SINGLETONS: AppId[] = ['terminal', 'web', 'messages', 'notes', 'about', 'settings']
+const SINGLETONS: AppId[] = ['terminal', 'web', 'messages', 'notes', 'about', 'settings', 'ai']
 
 const DEFAULT_SIZE: Record<AppId, { w: number; h: number }> = {
   files: { w: 820, h: 520 },
@@ -47,6 +47,7 @@ const DEFAULT_SIZE: Record<AppId, { w: number; h: number }> = {
   about: { w: 500, h: 400 },
   settings: { w: 580, h: 430 },
   quicklook: { w: 580, h: 460 },
+  ai: { w: 520, h: 560 },
 }
 
 function titleFor(app: AppId, opts?: OpenAppOptions): string {
@@ -67,6 +68,8 @@ function titleFor(app: AppId, opts?: OpenAppOptions): string {
       return 'About NamishOS'
     case 'settings':
       return 'Settings'
+    case 'ai':
+      return 'AI Assistant'
     case 'quicklook':
       return opts?.quickLook?.title ?? 'Preview'
   }

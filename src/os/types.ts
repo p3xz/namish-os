@@ -7,6 +7,7 @@ export type AppId =
   | 'about'
   | 'quicklook'
   | 'settings'
+  | 'ai'
 
 export interface Bounds {
   x: number
