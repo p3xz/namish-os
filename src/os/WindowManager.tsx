@@ -38,13 +38,13 @@ export function useWindows() {
 }
 
 /** Apps that only ever have one window open at a time. */
-const SINGLETONS: AppId[] = ['terminal', 'web', 'messages', 'notes', 'about', 'settings', 'ai']
+const SINGLETONS: AppId[] = ['terminal', 'web', 'messages', 'notes', 'about', 'settings', 'ai', 'insidcode']
 
 /** Which dock icon represents a freshly launched app. */
 function dockIdForLaunch(app: AppId, opts?: OpenAppOptions): string | null {
   if (app === 'files') return opts?.folderPath?.[0] === 'Projects' ? 'projects' : 'files'
   if (app === 'quicklook') return 'files'
-  if (app === 'terminal' || app === 'web' || app === 'messages' || app === 'notes' || app === 'ai')
+  if (app === 'terminal' || app === 'web' || app === 'messages' || app === 'notes' || app === 'ai' || app === 'insidcode')
     return app
   return null
 }
@@ -59,6 +59,7 @@ const DEFAULT_SIZE: Record<AppId, { w: number; h: number }> = {
   settings: { w: 580, h: 430 },
   quicklook: { w: 580, h: 460 },
   ai: { w: 520, h: 560 },
+  insidcode: { w: 920, h: 620 },
 }
 
 function titleFor(app: AppId, opts?: OpenAppOptions): string {
@@ -81,6 +82,8 @@ function titleFor(app: AppId, opts?: OpenAppOptions): string {
       return 'Settings'
     case 'ai':
       return 'AI Assistant'
+    case 'insidcode':
+      return 'InsidCode'
     case 'quicklook':
       return opts?.quickLook?.title ?? 'Preview'
   }

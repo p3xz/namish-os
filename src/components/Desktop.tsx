@@ -4,7 +4,7 @@ import MenuBar from './MenuBar'
 import Dock from './Dock'
 import WindowLayer from './WindowLayer'
 import MacFolder from './MacFolder'
-import { MessagesIcon, AIIcon } from './MacSquircleIcon'
+import { MessagesIcon, AIIcon, InsidCodeIcon } from './MacSquircleIcon'
 import { desktopFolders } from '@/os/filesystem'
 import { useWindows } from '@/os/WindowManager'
 
@@ -29,20 +29,30 @@ function DesktopIcons() {
       openApp('messages')
     } else if (name === 'AI') {
       openApp('ai')
+    } else if (name === 'InsidCode') {
+      openApp('insidcode')
     } else {
       openApp('files', { folderPath: [name] })
     }
   }
 
   const iconFor = (name: string) =>
-    name === 'Contact' ? <MessagesIcon size={48} /> : name === 'AI' ? <AIIcon size={48} /> : <MacFolder size={48} />
+    name === 'Contact' ? (
+      <MessagesIcon size={48} />
+    ) : name === 'AI' ? (
+      <AIIcon size={48} />
+    ) : name === 'InsidCode' ? (
+      <InsidCodeIcon size={48} />
+    ) : (
+      <MacFolder size={48} />
+    )
 
   return (
     <div
       className="absolute right-3 top-11 z-10 flex flex-col gap-0.5"
       onClick={(e) => e.stopPropagation()}
     >
-      {[...desktopFolders, 'AI'].map((name) => (
+      {[...desktopFolders, 'AI', 'InsidCode'].map((name) => (
         <button
           key={name}
           onClick={() => setSelected(name)}

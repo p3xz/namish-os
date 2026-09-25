@@ -10,6 +10,7 @@ import NotesApp from './NotesApp'
 import AboutDialog from './AboutDialog'
 import SettingsWindow from './SettingsWindow'
 import AIWindow from './AIWindow'
+import InsidCodeApp from './InsidCodeApp'
 import type { AppId, OSWindow } from '@/os/types'
 
 const TONES: Record<AppId, WindowTone> = {
@@ -22,6 +23,7 @@ const TONES: Record<AppId, WindowTone> = {
   settings: 'light',
   quicklook: 'light',
   ai: 'light',
+  insidcode: 'light',
 }
 
 function WindowContent({ win }: { win: OSWindow }) {
@@ -44,6 +46,8 @@ function WindowContent({ win }: { win: OSWindow }) {
       return <SettingsWindow />
     case 'ai':
       return <AIWindow />
+    case 'insidcode':
+      return <InsidCodeApp />
   }
 }
 

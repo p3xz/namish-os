@@ -11,6 +11,7 @@ import {
   Sparkles,
   Settings as SettingsIcon,
   SquareTerminal,
+  Swords,
 } from 'lucide-react'
 import MacOSMenuBar from './ui/mac-os-menu-bar'
 import { useWindows } from '@/os/WindowManager'
@@ -26,6 +27,7 @@ const APP_NAMES: Record<AppId, string> = {
   settings: 'NamishOS',
   quicklook: 'Preview',
   ai: 'AI',
+  insidcode: 'InsidCode',
 }
 
 const icon = (Icon: typeof Folder) => <Icon size={15} strokeWidth={2} />
@@ -42,6 +44,7 @@ const N_MENU = [
   { label: 'Web', action: 'open-web', icon: icon(Globe) },
   { label: 'Messages', action: 'open-messages', icon: icon(MessageCircle) },
   { label: 'AI', action: 'open-ai', icon: icon(Sparkles) },
+  { label: 'InsidCode', action: 'open-insidcode', icon: icon(Swords) },
   { label: 'Notes', action: 'open-notes', icon: icon(NotebookPen) },
   { type: 'separator' as const },
   { label: 'Sleep', action: 'sleep', icon: icon(Moon) },
@@ -88,6 +91,9 @@ export default function MenuBar() {
         break
       case 'open-ai':
         openApp('ai')
+        break
+      case 'open-insidcode':
+        openApp('insidcode')
         break
       case 'open-notes':
         openApp('notes')

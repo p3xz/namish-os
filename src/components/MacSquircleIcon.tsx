@@ -75,3 +75,22 @@ export function AIIcon({ size = 48, className = '' }: { size?: number; className
     </MacSquircleIcon>
   )
 }
+
+/** Indigo code brackets: the InsidCode app icon. */
+export function InsidCodeIcon({ size = 48, className = '' }: { size?: number; className?: string }) {
+  return (
+    <MacSquircleIcon from="#7c8cff" to="#5b3df5" size={size} className={className}>
+      <text
+        x="50"
+        y="66"
+        textAnchor="middle"
+        fontFamily="ui-monospace, monospace"
+        fontSize="38"
+        fontWeight="bold"
+        fill="#ffffff"
+      >
+        {'</>'}
+      </text>
+    </MacSquircleIcon>
+  )
+}

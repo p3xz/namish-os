@@ -89,6 +89,14 @@ const ICONS = {
       `<path d="M33 11 C34 22 37 27 48 30 C37 33 34 38 33 49 C32 38 29 33 18 30 C29 27 32 22 33 11 Z" fill="#ffffff"/>` +
       `<path d="M47 36 C48 40 49 42 53 43 C49 44 48 46 47 50 C46 46 45 44 41 43 C45 42 46 40 47 36 Z" fill="#ffffff" opacity="0.85"/>`,
   ),
+  /** Code brackets, InsidCode */
+  insidcode: iconSvg(
+    `<defs><linearGradient id="ic" x1="0" y1="0" x2="0" y2="1">` +
+      `<stop offset="0" stop-color="#7c8cff"/><stop offset="1" stop-color="#5b3df5"/>` +
+      `</linearGradient></defs>` +
+      `<rect x="2" y="2" width="60" height="60" rx="15" fill="url(#ic)"/>` +
+      `<text x="32" y="43" text-anchor="middle" font-family="monospace" font-size="26" font-weight="bold" fill="#ffffff">&lt;/&gt;</text>`,
+  ),
   /** Notepad, Notes */
   notes: iconSvg(
     `<rect x="2" y="2" width="60" height="60" rx="15" fill="#ffffff"/>` +
@@ -126,6 +134,7 @@ const DOCK_APPS: DockEntry[] = [
   { id: 'web', name: 'Web', icon: ICONS.web },
   { id: 'messages', name: 'Messages', icon: ICONS.messages },
   { id: 'ai', name: 'AI', icon: ICONS.ai },
+  { id: 'insidcode', name: 'InsidCode', icon: ICONS.insidcode },
   { id: 'notes', name: 'Notes', icon: ICONS.notes },
   { id: 'trash', name: 'Trash', icon: ICONS.trash },
 ]
@@ -141,6 +150,7 @@ function dockIdForApp(app: string): string | null {
     case 'messages':
     case 'notes':
     case 'ai':
+    case 'insidcode':
       return app
     default:
       return null
