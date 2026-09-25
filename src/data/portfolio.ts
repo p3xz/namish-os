@@ -225,6 +225,38 @@ export const projects: Project[] = [
       ],
     },
   },
+  {
+    id: 'mincratype',
+    name: 'MINCRATYPE',
+    tagline: 'Minecraft-themed typing test',
+    description:
+      'Typing test with a blocky on-screen keyboard that lights up as you type.',
+    stack: ['React 19', 'TypeScript', 'Tailwind CSS'],
+    year: '2026',
+    category: 'Web Games',
+    details: {
+      overview: [
+        'MINCRATYPE is a typing test dressed up in a Minecraft aesthetic. Pick a timer, mine words with your keyboard, and a blocky on-screen keyboard slides up and depresses in sync with every keystroke.',
+        'I built it in 2026 because typing practice felt like a chore, and wrapping it in a game I actually wanted to look at fixed that. It is a fan-made parody concept, not affiliated with Mojang or Microsoft.',
+      ],
+      features: [
+        'Timer modes: 15, 30, 60, and 120 seconds, starting on the first keystroke with instant restart on Tab',
+        'Full on-screen keyboard that mirrors the physical keyboard in real time, with clickable keys for touch devices',
+        'WPM, raw WPM, accuracy, and monkeytype-style consistency, with per-mode personal bests saved in localStorage',
+      ],
+      stack: [
+        { tech: 'React 19 + TypeScript + Vite', why: 'Fast dev loop and a strict type system for the scoring engine, where an off-by-one in keystroke accounting ruins the metrics.' },
+        { tech: 'Tailwind CSS', why: 'The blocky pixel styling is all utility classes, which kept the Minecraft look consistent without a separate stylesheet to maintain.' },
+        { tech: 'Framer Motion', why: 'Handles the keyboard slide-up entrance and key-press animations without me hand-rolling animation state.' },
+      ],
+      howItWorks: [
+        'Words are drawn from a curated list and the test engine listens to window-level keydown and keyup events.',
+        'Every keystroke is scored as correct, incorrect, extra, or missed. The timer starts on the first key and Tab restarts instantly.',
+        'The same listeners drive the on-screen keyboard, so the visual keys depress in exact sync with the physical keyboard.',
+        'At the end, WPM, accuracy, and consistency are computed and the personal best for that timer mode is saved locally.',
+      ],
+    },
+  },
 ]
 
 export const experience: ExperienceEntry[] = [
