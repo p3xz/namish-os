@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect, useRef, useCallback, type ReactNode } from 'react'
-import { BatteryMedium, Wifi, ChevronLeft, ChevronRight, Check } from 'lucide-react'
+import { BatteryMedium, Wifi, ChevronLeft, ChevronRight, Check, Search } from 'lucide-react'
 import NLogo from '@/components/NLogo'
 
 // Types
@@ -23,6 +23,7 @@ interface MacOSMenuBarProps {
   menus?: MenuConfig[]
   nMenuItems?: MenuItemOption[]
   onMenuAction?: (action: string) => void
+  onSpotlight?: () => void
   className?: string
 }
 
@@ -375,6 +376,7 @@ const MacOSMenuBar: React.FC<MacOSMenuBarProps> = ({
   menus = DEFAULT_MENUS,
   nMenuItems = N_MENU_ITEMS,
   onMenuAction,
+  onSpotlight,
   className = '',
 }) => {
   const [currentTime, setCurrentTime] = useState('')
@@ -510,6 +512,14 @@ const MacOSMenuBar: React.FC<MacOSMenuBarProps> = ({
 
           {/* Right section - status icons and clock */}
           <div className="flex items-center space-x-3.5">
+            <button
+              className="macos-popover-trigger rounded p-0.5 transition-colors hover:bg-black/[0.06]"
+              onClick={() => onSpotlight?.()}
+              title="Spotlight (Cmd+Space)"
+              aria-label="Spotlight search"
+            >
+              <Search size={15} className="text-neutral-800" strokeWidth={2.2} />
+            </button>
             <button
               className="macos-popover-trigger rounded p-0.5 transition-colors hover:bg-black/[0.06]"
               onClick={() =>

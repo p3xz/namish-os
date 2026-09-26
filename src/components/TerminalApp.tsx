@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useWindows } from '@/os/WindowManager'
+import { onTerminalCommand, takePendingTerminalCommand } from '@/os/spotlightBus'
 import { findFolderByName } from '@/os/filesystem'
 import { experience, profile, projects, skillGroups } from '@/data/portfolio'
 
@@ -195,6 +196,16 @@ export default function TerminalApp({ winId }: { winId: string }) {
       }
     }
   }
+
+  // Spotlight can ask the terminal to run a command by name.
+  const runRef = useRef(run)
+  runRef.current = run
+  useEffect(() => {
+    const off = onTerminalCommand((cmd) => runRef.current(cmd))
+    const pending = takePendingTerminalCommand()
+    if (pending) runRef.current(pending)
+    return off
+  }, [])
 
   return (
     <div

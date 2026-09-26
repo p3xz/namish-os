@@ -2,6 +2,7 @@ import { useState } from 'react'
 import Wallpaper from './Wallpaper'
 import MenuBar from './MenuBar'
 import Dock from './Dock'
+import Spotlight from './Spotlight'
 import WindowLayer from './WindowLayer'
 import MacFolder from './MacFolder'
 import { MessagesIcon, AIIcon, InsidCodeIcon } from './MacSquircleIcon'
@@ -16,6 +17,7 @@ export default function Desktop() {
       <WindowLayer />
       <MenuBar />
       <Dock />
+      <Spotlight />
     </div>
   )
 }

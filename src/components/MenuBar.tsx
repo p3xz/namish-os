@@ -15,6 +15,7 @@ import {
 } from 'lucide-react'
 import MacOSMenuBar from './ui/mac-os-menu-bar'
 import { useWindows } from '@/os/WindowManager'
+import { openSpotlight } from '@/os/spotlightBus'
 import type { AppId } from '@/os/types'
 
 const APP_NAMES: Record<AppId, string> = {
@@ -136,5 +137,5 @@ export default function MenuBar() {
     }
   }
 
-  return <MacOSMenuBar appName={APP_NAMES[activeApp]} nMenuItems={N_MENU} onMenuAction={handleAction} />
+  return <MacOSMenuBar appName={APP_NAMES[activeApp]} nMenuItems={N_MENU} onMenuAction={handleAction} onSpotlight={openSpotlight} />
 }
