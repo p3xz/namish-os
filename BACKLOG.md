@@ -5,7 +5,7 @@ One item ships per daily commit. Every item below is a genuine, noticeable featu
 ## Apps and modes
 
 - [x] Spotlight search: Cmd+Space (or menu bar icon) opens a search overlay that finds folders, files, projects, terminal commands, and settings in one place
-- [ ] Calculator app in the Dock: a working calculator with keyboard support, in NamishOS window chrome
+- [x] Calculator app in the Dock: a working calculator with keyboard support, in NamishOS window chrome
 - [ ] Lock screen: clock + "click to log back in" over a blurred wallpaper, distinct from sleep
 - [ ] Mission Control: an overview that tiles every open window so you can pick one or close them in bulk
 - [ ] Terminal `sysinfo` command: neofetch-style readout with an ASCII N logo, OS version, uptime, and project count

@@ -1,5 +1,6 @@
 import {
   Code2,
+  Calculator as CalculatorIcon,
   Folder,
   Globe,
   Info,
@@ -29,6 +30,7 @@ const APP_NAMES: Record<AppId, string> = {
   quicklook: 'Preview',
   ai: 'AI',
   insidcode: 'InsidCode',
+  calculator: 'Calculator',
 }
 
 const icon = (Icon: typeof Folder) => <Icon size={15} strokeWidth={2} />
@@ -47,6 +49,7 @@ const N_MENU = [
   { label: 'AI', action: 'open-ai', icon: icon(Sparkles) },
   { label: 'InsidCode', action: 'open-insidcode', icon: icon(Swords) },
   { label: 'Notes', action: 'open-notes', icon: icon(NotebookPen) },
+  { label: 'Calculator', action: 'open-calculator', icon: icon(CalculatorIcon) },
   { type: 'separator' as const },
   { label: 'Sleep', action: 'sleep', icon: icon(Moon) },
   { label: 'Restart...', action: 'restart', icon: icon(RotateCcw) },
@@ -98,6 +101,9 @@ export default function MenuBar() {
         break
       case 'open-notes':
         openApp('notes')
+        break
+      case 'open-calculator':
+        openApp('calculator')
         break
       case 'sleep':
         powerAction('sleep')

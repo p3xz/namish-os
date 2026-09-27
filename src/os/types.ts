@@ -9,6 +9,7 @@ export type AppId =
   | 'settings'
   | 'ai'
   | 'insidcode'
+  | 'calculator'
 
 export interface Bounds {
   x: number

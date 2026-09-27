@@ -11,6 +11,7 @@ import AboutDialog from './AboutDialog'
 import SettingsWindow from './SettingsWindow'
 import AIWindow from './AIWindow'
 import InsidCodeApp from './InsidCodeApp'
+import CalculatorApp from './CalculatorApp'
 import type { AppId, OSWindow } from '@/os/types'
 
 const TONES: Record<AppId, WindowTone> = {
@@ -24,6 +25,7 @@ const TONES: Record<AppId, WindowTone> = {
   quicklook: 'light',
   ai: 'light',
   insidcode: 'light',
+  calculator: 'light',
 }
 
 function WindowContent({ win }: { win: OSWindow }) {
@@ -48,6 +50,8 @@ function WindowContent({ win }: { win: OSWindow }) {
       return <AIWindow />
     case 'insidcode':
       return <InsidCodeApp />
+    case 'calculator':
+      return <CalculatorApp winId={win.id} />
   }
 }
 

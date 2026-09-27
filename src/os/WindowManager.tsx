@@ -38,13 +38,13 @@ export function useWindows() {
 }
 
 /** Apps that only ever have one window open at a time. */
-const SINGLETONS: AppId[] = ['terminal', 'web', 'messages', 'notes', 'about', 'settings', 'ai', 'insidcode']
+const SINGLETONS: AppId[] = ['terminal', 'web', 'messages', 'notes', 'about', 'settings', 'ai', 'insidcode', 'calculator']
 
 /** Which dock icon represents a freshly launched app. */
 function dockIdForLaunch(app: AppId, opts?: OpenAppOptions): string | null {
   if (app === 'files') return opts?.folderPath?.[0] === 'Projects' ? 'projects' : 'files'
   if (app === 'quicklook') return 'files'
-  if (app === 'terminal' || app === 'web' || app === 'messages' || app === 'notes' || app === 'ai' || app === 'insidcode')
+  if (app === 'terminal' || app === 'web' || app === 'messages' || app === 'notes' || app === 'ai' || app === 'insidcode' || app === 'calculator')
     return app
   return null
 }
@@ -60,6 +60,7 @@ const DEFAULT_SIZE: Record<AppId, { w: number; h: number }> = {
   quicklook: { w: 580, h: 460 },
   ai: { w: 520, h: 560 },
   insidcode: { w: 920, h: 620 },
+  calculator: { w: 320, h: 500 },
 }
 
 function titleFor(app: AppId, opts?: OpenAppOptions): string {
@@ -84,6 +85,8 @@ function titleFor(app: AppId, opts?: OpenAppOptions): string {
       return 'AI Assistant'
     case 'insidcode':
       return 'InsidCode'
+    case 'calculator':
+      return 'Calculator'
     case 'quicklook':
       return opts?.quickLook?.title ?? 'Preview'
   }

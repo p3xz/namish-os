@@ -106,6 +106,26 @@ const ICONS = {
       `<rect x="12" y="37" width="40" height="2.6" rx="1.3" fill="#d1d1d6"/>` +
       `<rect x="12" y="44" width="26" height="2.6" rx="1.3" fill="#d1d1d6"/>`,
   ),
+  /** Calculator, dark body with display and key grid */
+  calculator: iconSvg(
+    `<defs><linearGradient id="ca" x1="0" y1="0" x2="0" y2="1">` +
+      `<stop offset="0" stop-color="#ffb340"/><stop offset="1" stop-color="#ff8a00"/>` +
+      `</linearGradient></defs>` +
+      `<rect x="2" y="2" width="60" height="60" rx="15" fill="url(#ca)"/>` +
+      `<rect x="21" y="11" width="22" height="42" rx="4" fill="#1c1c1e"/>` +
+      `<rect x="24" y="15" width="16" height="7" rx="1.5" fill="#c9f5d8"/>` +
+      `<rect x="24" y="26" width="4.5" height="4.5" rx="1" fill="#e8e8ee"/>` +
+      `<rect x="29.75" y="26" width="4.5" height="4.5" rx="1" fill="#e8e8ee"/>` +
+      `<rect x="35.5" y="26" width="4.5" height="4.5" rx="1" fill="#e8e8ee"/>` +
+      `<rect x="24" y="32" width="4.5" height="4.5" rx="1" fill="#e8e8ee"/>` +
+      `<rect x="29.75" y="32" width="4.5" height="4.5" rx="1" fill="#e8e8ee"/>` +
+      `<rect x="35.5" y="32" width="4.5" height="4.5" rx="1" fill="#e8e8ee"/>` +
+      `<rect x="24" y="38" width="4.5" height="4.5" rx="1" fill="#e8e8ee"/>` +
+      `<rect x="29.75" y="38" width="4.5" height="4.5" rx="1" fill="#e8e8ee"/>` +
+      `<rect x="35.5" y="38" width="4.5" height="4.5" rx="1" fill="#e8e8ee"/>` +
+      `<rect x="24" y="44" width="4.5" height="4.5" rx="1" fill="#e8e8ee"/>` +
+      `<rect x="29.75" y="44" width="10.25" height="4.5" rx="1" fill="#e8e8ee"/>`,
+  ),
   /** Wire bin, Trash */
   trash: iconSvg(
     `<defs><linearGradient id="tr" x1="0" y1="0" x2="0" y2="1">` +
@@ -136,6 +156,7 @@ const DOCK_APPS: DockEntry[] = [
   { id: 'ai', name: 'AI', icon: ICONS.ai },
   { id: 'insidcode', name: 'InsidCode', icon: ICONS.insidcode },
   { id: 'notes', name: 'Notes', icon: ICONS.notes },
+  { id: 'calculator', name: 'Calculator', icon: ICONS.calculator },
   { id: 'trash', name: 'Trash', icon: ICONS.trash },
 ]
 
@@ -152,6 +173,8 @@ function dockIdForApp(app: string): string | null {
     case 'ai':
     case 'insidcode':
       return app
+    case 'calculator':
+      return 'calculator'
     default:
       return null
   }
@@ -189,6 +212,7 @@ export default function Dock() {
       case 'web':
       case 'notes':
       case 'ai':
+      case 'calculator':
         openApp(appId)
         break
       default:

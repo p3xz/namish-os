@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
+  Calculator,
   Code2,
   FileText,
   Folder,
@@ -56,6 +57,7 @@ const APPS: { app: AppId; name: string; subtitle: string; keywords: string; icon
   { app: 'web', name: 'Web', subtitle: 'Browse the web', keywords: 'browser internet safari', icon: 'web' },
   { app: 'messages', name: 'Messages', subtitle: 'Chat with Namish', keywords: 'chat imessage contact', icon: 'messages' },
   { app: 'notes', name: 'Notes', subtitle: 'Your notes', keywords: 'notepad memo', icon: 'notes' },
+  { app: 'calculator', name: 'Calculator', subtitle: 'Do the math', keywords: 'calculator calc math arithmetic', icon: 'calculator' },
   { app: 'ai', name: 'AI Assistant', subtitle: 'Ask anything', keywords: 'ai assistant help', icon: 'ai' },
   { app: 'insidcode', name: 'InsidCode', subtitle: 'Coding duels', keywords: 'code competitive programming game', icon: 'insidcode' },
   { app: 'settings', name: 'System Settings', subtitle: 'Wallpaper and more', keywords: 'settings preferences system', icon: 'settings' },
@@ -258,6 +260,8 @@ function SpotIcon({ icon, light = false }: { icon: string; light?: boolean }) {
       return <MessageCircle size={16} className={cls} />
     case 'notes':
       return <NotebookPen size={16} className={cls} />
+    case 'calculator':
+      return <Calculator size={16} className={cls} />
     case 'ai':
       return <Sparkles size={16} className={cls} />
     case 'insidcode':
