@@ -76,6 +76,7 @@ const N_MENU_ITEMS: MenuItemOption[] = [
   { type: 'separator' },
   { label: 'System Settings...', action: 'settings' },
   { type: 'separator' },
+  { label: 'Lock Screen', action: 'lock' },
   { label: 'Sleep', action: 'sleep' },
   { label: 'Restart...', action: 'restart' },
   { label: 'Shut Down...', action: 'shutdown' },

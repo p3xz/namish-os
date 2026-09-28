@@ -9,7 +9,7 @@ import {
 } from 'react'
 import type { AppId, Bounds, FinderView, OpenAppOptions, OSWindow } from './types'
 
-export type PowerAction = 'sleep' | 'restart' | 'shutdown'
+export type PowerAction = 'sleep' | 'lock' | 'restart' | 'shutdown'
 
 interface WindowManagerCtx {
   windows: OSWindow[]

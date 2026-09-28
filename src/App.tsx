@@ -3,16 +3,18 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { WindowManagerProvider, type PowerAction } from './os/WindowManager'
 import { AppearanceProvider } from './os/Appearance'
 import BootScreen from './components/BootScreen'
+import LockScreen from './components/LockScreen'
 import Desktop from './components/Desktop'
 import NLogo from './components/NLogo'
 
-type Phase = 'boot' | 'desktop' | 'sleep' | 'shutdown'
+type Phase = 'boot' | 'desktop' | 'lock' | 'sleep' | 'shutdown'
 
 export default function App() {
   const [phase, setPhase] = useState<Phase>('boot')
 
   const powerAction = useCallback((a: PowerAction) => {
     if (a === 'sleep') setPhase('sleep')
+    else if (a === 'lock') setPhase('lock')
     else if (a === 'restart') setPhase('boot')
     else setPhase('shutdown')
   }, [])
@@ -24,7 +26,11 @@ export default function App() {
           {phase === 'boot' && <BootScreen key="boot" onDone={() => setPhase('desktop')} />}
         </AnimatePresence>
 
-        {(phase === 'desktop' || phase === 'sleep') && <Desktop />}
+        {(phase === 'desktop' || phase === 'sleep' || phase === 'lock') && <Desktop />}
+
+        <AnimatePresence>
+          {phase === 'lock' && <LockScreen key="lock" onUnlock={() => setPhase('desktop')} />}
+        </AnimatePresence>
 
         <AnimatePresence>
           {phase === 'sleep' && <SleepOverlay key="sleep" onWake={() => setPhase('desktop')} />}

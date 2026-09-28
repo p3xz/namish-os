@@ -6,6 +6,7 @@ import {
   Info,
   MessageCircle,
   Moon,
+  Lock as LockIcon,
   NotebookPen,
   Power,
   RotateCcw,
@@ -51,6 +52,7 @@ const N_MENU = [
   { label: 'Notes', action: 'open-notes', icon: icon(NotebookPen) },
   { label: 'Calculator', action: 'open-calculator', icon: icon(CalculatorIcon) },
   { type: 'separator' as const },
+  { label: 'Lock Screen', action: 'lock', icon: icon(LockIcon) },
   { label: 'Sleep', action: 'sleep', icon: icon(Moon) },
   { label: 'Restart...', action: 'restart', icon: icon(RotateCcw) },
   { label: 'Shut Down...', action: 'shutdown', icon: icon(Power) },
@@ -107,6 +109,9 @@ export default function MenuBar() {
         break
       case 'sleep':
         powerAction('sleep')
+        break
+      case 'lock':
+        powerAction('lock')
         break
       case 'restart':
         powerAction('restart')
