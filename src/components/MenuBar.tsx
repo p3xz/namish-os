@@ -4,6 +4,7 @@ import {
   Folder,
   Globe,
   Info,
+  LayoutGrid,
   MessageCircle,
   Moon,
   Lock as LockIcon,
@@ -18,6 +19,7 @@ import {
 import MacOSMenuBar from './ui/mac-os-menu-bar'
 import { useWindows } from '@/os/WindowManager'
 import { openSpotlight } from '@/os/spotlightBus'
+import { toggleMissionControl } from '@/os/missionControlBus'
 import type { AppId } from '@/os/types'
 
 const APP_NAMES: Record<AppId, string> = {
@@ -41,6 +43,7 @@ const N_MENU = [
   { label: 'About NamishOS', action: 'about', icon: icon(Info) },
   { type: 'separator' as const },
   { label: 'System Settings...', action: 'settings', icon: icon(SettingsIcon) },
+  { label: 'Mission Control', action: 'mission-control', icon: icon(LayoutGrid), shortcut: '⌃↑' },
   { type: 'separator' as const },
   { label: 'Files', action: 'open-files', icon: icon(Folder) },
   { label: 'Projects', action: 'open-projects', icon: icon(Code2) },
@@ -79,6 +82,9 @@ export default function MenuBar() {
         break
       case 'settings':
         openApp('settings')
+        break
+      case 'mission-control':
+        toggleMissionControl()
         break
       case 'open-files':
         openApp('files', { folderPath: [] })
@@ -148,5 +154,5 @@ export default function MenuBar() {
     }
   }
 
-  return <MacOSMenuBar appName={APP_NAMES[activeApp]} nMenuItems={N_MENU} onMenuAction={handleAction} onSpotlight={openSpotlight} />
+  return <MacOSMenuBar appName={APP_NAMES[activeApp]} nMenuItems={N_MENU} onMenuAction={handleAction} onSpotlight={openSpotlight} onMissionControl={toggleMissionControl} />
 }

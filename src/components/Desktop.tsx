@@ -3,6 +3,7 @@ import Wallpaper from './Wallpaper'
 import MenuBar from './MenuBar'
 import Dock from './Dock'
 import Spotlight from './Spotlight'
+import MissionControl from './MissionControl'
 import WindowLayer from './WindowLayer'
 import MacFolder from './MacFolder'
 import { MessagesIcon, AIIcon, InsidCodeIcon } from './MacSquircleIcon'
@@ -18,6 +19,7 @@ export default function Desktop() {
       <MenuBar />
       <Dock />
       <Spotlight />
+      <MissionControl />
     </div>
   )
 }

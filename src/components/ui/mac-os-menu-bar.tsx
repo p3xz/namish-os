@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect, useRef, useCallback, type ReactNode } from 'react'
-import { BatteryMedium, Wifi, ChevronLeft, ChevronRight, Check, Search } from 'lucide-react'
+import { BatteryMedium, Wifi, ChevronLeft, ChevronRight, Check, Search, LayoutGrid } from 'lucide-react'
 import NLogo from '@/components/NLogo'
 
 // Types
@@ -24,6 +24,7 @@ interface MacOSMenuBarProps {
   nMenuItems?: MenuItemOption[]
   onMenuAction?: (action: string) => void
   onSpotlight?: () => void
+  onMissionControl?: () => void
   className?: string
 }
 
@@ -61,6 +62,7 @@ const DEFAULT_MENUS: MenuConfig[] = [
       { label: 'Minimize', action: 'minimize', shortcut: '\u2318M' },
       { label: 'Zoom', action: 'zoom' },
       { type: 'separator' },
+      { label: 'Mission Control', action: 'mission-control', shortcut: '⌃↑' },
       { label: 'Bring All to Front', action: 'bring-to-front' },
     ],
   },
@@ -378,6 +380,7 @@ const MacOSMenuBar: React.FC<MacOSMenuBarProps> = ({
   nMenuItems = N_MENU_ITEMS,
   onMenuAction,
   onSpotlight,
+  onMissionControl,
   className = '',
 }) => {
   const [currentTime, setCurrentTime] = useState('')
@@ -513,6 +516,14 @@ const MacOSMenuBar: React.FC<MacOSMenuBarProps> = ({
 
           {/* Right section - status icons and clock */}
           <div className="flex items-center space-x-3.5">
+            <button
+              className="macos-popover-trigger rounded p-0.5 transition-colors hover:bg-black/[0.06]"
+              onClick={() => onMissionControl?.()}
+              title="Mission Control (Ctrl+Up)"
+              aria-label="Mission Control"
+            >
+              <LayoutGrid size={15} className="text-neutral-800" strokeWidth={2.2} />
+            </button>
             <button
               className="macos-popover-trigger rounded p-0.5 transition-colors hover:bg-black/[0.06]"
               onClick={() => onSpotlight?.()}
