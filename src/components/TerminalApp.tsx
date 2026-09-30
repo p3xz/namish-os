@@ -23,6 +23,37 @@ const toneClass: Record<Tone, string> = {
 const PROMPT_USER = 'namish@namishos'
 const PROMPT_PATH = '~'
 
+// Marked when this module first loads, so sysinfo can report session uptime.
+const SESSION_START = Date.now()
+
+const SYSINFO_LOGO = [
+  'N      N',
+  'NN     N',
+  'N N    N',
+  'N  N   N',
+  'N   N  N',
+  'N    N N',
+  'N     NN',
+  'N      N',
+]
+
+const TERMINAL_COMMANDS = [
+  'help', 'whoami', 'about', 'projects', 'skills', 'experience',
+  'contact', 'open', 'echo', 'date', 'sysinfo', 'clear', 'exit', 'sudo',
+]
+
+function formatUptime(ms: number): string {
+  const s = Math.max(0, Math.floor(ms / 1000))
+  const d = Math.floor(s / 86400)
+  const h = Math.floor((s % 86400) / 3600)
+  const m = Math.floor((s % 3600) / 60)
+  const secs = s % 60
+  if (d > 0) return `${d}d ${h}h ${m}m`
+  if (h > 0) return `${h}h ${m}m`
+  if (m > 0) return `${m}m ${secs}s`
+  return `${secs}s`
+}
+
 const HELP: Line[] = [
   { kind: 'out', text: 'Available commands:', tone: 'muted' },
   { kind: 'out', text: '  help         Show this list', tone: 'default' },
@@ -35,6 +66,7 @@ const HELP: Line[] = [
   { kind: 'out', text: '  open <name>  Open a folder (try: projects)', tone: 'default' },
   { kind: 'out', text: '  echo <text>  Say something back', tone: 'default' },
   { kind: 'out', text: '  date         Current date and time', tone: 'default' },
+  { kind: 'out', text: '  sysinfo      System information (neofetch-style)', tone: 'default' },
   { kind: 'out', text: '  clear        Clear the screen', tone: 'default' },
   { kind: 'out', text: '  exit         Close this terminal', tone: 'default' },
 ]
@@ -79,6 +111,32 @@ export default function TerminalApp({ winId }: { winId: string }) {
   }
 
   const out = (text: string, tone: Tone = 'default'): Line => ({ kind: 'out', text, tone })
+
+  const sysinfoLines = (): Line[] => {
+    const info = [
+      'OS: NamishOS 26 "Nebula"',
+      'Host: NamishHD',
+      'Kernel: browser-native',
+      `Uptime: ${formatUptime(Date.now() - SESSION_START)}`,
+      'Shell: zsh (web edition)',
+      typeof window !== 'undefined'
+        ? `Resolution: ${window.innerWidth}x${window.innerHeight}`
+        : 'Resolution: unknown',
+      `Projects: ${projects.length}`,
+      `Commands: ${TERMINAL_COMMANDS.length}`,
+    ]
+    const width = Math.max(...SYSINFO_LOGO.map((l) => l.length))
+    const rows: Line[] = [
+      out('namish@namishos', 'success'),
+      out('---------------', 'muted'),
+    ]
+    for (let i = 0; i < Math.max(SYSINFO_LOGO.length, info.length); i++) {
+      const logo = (SYSINFO_LOGO[i] ?? '').padEnd(width)
+      const text = info[i] === undefined ? logo : `${logo}   ${info[i]}`
+      rows.push(out(text, 'info'))
+    }
+    return rows
+  }
 
   const run = (raw: string) => {
     const cmd = raw.trim()
@@ -156,6 +214,9 @@ export default function TerminalApp({ winId }: { winId: string }) {
         break
       case 'date':
         push(out(new Date().toString(), 'default'))
+        break
+      case 'sysinfo':
+        push(sysinfoLines())
         break
       case 'clear':
         setLines([])
