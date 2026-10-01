@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useWindows } from '@/os/WindowManager'
 import { onTerminalCommand, takePendingTerminalCommand } from '@/os/spotlightBus'
-import { findFolderByName } from '@/os/filesystem'
+import { findFolderByName, homeFolder } from '@/os/filesystem'
 import { experience, profile, projects, skillGroups } from '@/data/portfolio'
 
 type Tone = 'default' | 'muted' | 'success' | 'info' | 'error'
@@ -69,12 +69,46 @@ const HELP: Line[] = [
   { kind: 'out', text: '  sysinfo      System information (neofetch-style)', tone: 'default' },
   { kind: 'out', text: '  clear        Clear the screen', tone: 'default' },
   { kind: 'out', text: '  exit         Close this terminal', tone: 'default' },
+  { kind: 'out', text: 'Tip: press Tab to autocomplete command and folder names.', tone: 'muted' },
 ]
 
 const WELCOME: Line[] = [
   { kind: 'out', text: 'NamishOS Terminal (zsh)', tone: 'success' },
   { kind: 'out', text: 'Type "help" to see what I can do.', tone: 'muted' },
+  { kind: 'out', text: 'Press Tab to autocomplete commands and folder names.', tone: 'muted' },
 ]
+
+function commonPrefix(a: string, b: string): string {
+  let i = 0
+  while (i < a.length && i < b.length && a[i].toLowerCase() === b[i].toLowerCase()) i++
+  return a.slice(0, i)
+}
+
+interface Completion {
+  base: string
+  fragment: string
+  candidates: string[]
+}
+
+/** zsh-style candidates: command names on the first token, folder names after `open`. */
+function completionFor(input: string): Completion | null {
+  if (/\s/.test(input)) {
+    const first = input.split(/\s+/)[0]
+    if (first.toLowerCase() !== 'open') return null
+    const lastSpace = input.lastIndexOf(' ')
+    const base = input.slice(0, lastSpace + 1)
+    const fragment = input.slice(lastSpace + 1)
+    const folders = [
+      homeFolder.name,
+      'Trash',
+      ...homeFolder.children.filter((c) => c.type === 'folder').map((c) => c.name),
+    ]
+    const candidates = folders.filter((f) => f.toLowerCase().startsWith(fragment.toLowerCase()))
+    return { base, fragment, candidates }
+  }
+  const candidates = TERMINAL_COMMANDS.filter((c) => c.startsWith(input.toLowerCase()))
+  return { base: '', fragment: input, candidates }
+}
 
 function Prompt() {
   return (
@@ -95,6 +129,8 @@ export default function TerminalApp({ winId }: { winId: string }) {
   const histPos = useRef(-1)
   const inputRef = useRef<HTMLInputElement>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
+  /** Input value at the last ambiguous Tab press; a second Tab on the same value lists candidates. */
+  const lastAmbiguousTab = useRef('')
 
   useEffect(() => {
     const el = scrollRef.current
@@ -254,6 +290,29 @@ export default function TerminalApp({ winId }: { winId: string }) {
       } else {
         histPos.current = next
         setValue(h[next])
+      }
+    } else if (e.key === 'Tab') {
+      e.preventDefault()
+      const el = inputRef.current
+      if (el && (el.selectionStart ?? value.length) !== value.length) return
+      const comp = completionFor(value)
+      if (!comp || comp.candidates.length === 0) return
+      const { base, fragment, candidates } = comp
+      if (candidates.length === 1) {
+        setValue(base + candidates[0] + (base === '' ? ' ' : ''))
+        lastAmbiguousTab.current = ''
+      } else {
+        const cp = candidates.reduce(commonPrefix)
+        if (cp.length > fragment.length) {
+          setValue(base + cp)
+          lastAmbiguousTab.current = ''
+        } else if (lastAmbiguousTab.current === value) {
+          push({ kind: 'in', text: value, tone: 'default' })
+          push(out(`  ${candidates.join('   ')}`, 'muted'))
+          lastAmbiguousTab.current = ''
+        } else {
+          lastAmbiguousTab.current = value
+        }
       }
     }
   }
