@@ -138,3 +138,19 @@ body {
   backdrop-filter: blur(22px) saturate(1.4);
   -webkit-backdrop-filter: blur(22px) saturate(1.4);
 }
+
+/* ---------- Green-phosphor terminal ---------- */
+.terminal-phosphor {
+  text-shadow: 0 0 8px rgba(74, 222, 128, 0.45);
+}
+.terminal-phosphor::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.22) 0 1px,
+    transparent 1px 3px
+  );
+}

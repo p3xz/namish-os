@@ -10,7 +10,7 @@ One item ships per daily commit. Every item below is a genuine, noticeable featu
 - [x] Mission Control: an overview that tiles every open window so you can pick one or close them in bulk
 - [x] Terminal `sysinfo` command: neofetch-style readout with an ASCII N logo, OS version, uptime, and project count
 - [x] Terminal tab-completion: complete command names and folder names for `open` with the Tab key
-- [ ] Terminal themes: light, dark, and green-phosphor themes switchable from Settings
+- [x] Terminal themes: light, dark, and green-phosphor themes switchable from Settings
 
 ## Finder and files
 

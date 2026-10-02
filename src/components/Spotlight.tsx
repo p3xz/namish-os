@@ -75,6 +75,7 @@ const COMMANDS: { cmd: string; desc: string }[] = [
   { cmd: 'open projects', desc: 'Open the Projects folder' },
   { cmd: 'echo', desc: 'Say something back' },
   { cmd: 'date', desc: 'Current date and time' },
+  { cmd: 'theme', desc: 'Switch terminal theme (dark, light, phosphor)' },
   { cmd: 'sysinfo', desc: 'Neofetch-style system information' },
   { cmd: 'clear', desc: 'Clear the terminal screen' },
   { cmd: 'exit', desc: 'Close the terminal' },

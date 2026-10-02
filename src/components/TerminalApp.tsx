@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useWindows } from '@/os/WindowManager'
 import { onTerminalCommand, takePendingTerminalCommand } from '@/os/spotlightBus'
+import { useAppearance, type TerminalTheme } from '@/os/Appearance'
 import { findFolderByName, homeFolder } from '@/os/filesystem'
 import { experience, profile, projects, skillGroups } from '@/data/portfolio'
 
@@ -12,12 +13,62 @@ interface Line {
   tone: Tone
 }
 
-const toneClass: Record<Tone, string> = {
-  default: 'text-zinc-100',
-  muted: 'text-zinc-400',
-  success: 'text-emerald-300',
-  info: 'text-cyan-300',
-  error: 'text-rose-300',
+interface TerminalPalette {
+  bg: string
+  text: string
+  caret: string
+  promptUser: string
+  promptPath: string
+  promptMark: string
+  tones: Record<Tone, string>
+}
+
+const TERMINAL_PALETTES: Record<TerminalTheme, TerminalPalette> = {
+  dark: {
+    bg: 'bg-[#101014]/95',
+    text: 'text-zinc-100',
+    caret: 'caret-emerald-300',
+    promptUser: 'text-emerald-300',
+    promptPath: 'text-zinc-400',
+    promptMark: 'text-zinc-100',
+    tones: {
+      default: 'text-zinc-100',
+      muted: 'text-zinc-400',
+      success: 'text-emerald-300',
+      info: 'text-cyan-300',
+      error: 'text-rose-300',
+    },
+  },
+  light: {
+    bg: 'bg-[#f7f7f5]',
+    text: 'text-zinc-800',
+    caret: 'caret-emerald-600',
+    promptUser: 'text-emerald-600',
+    promptPath: 'text-zinc-500',
+    promptMark: 'text-zinc-800',
+    tones: {
+      default: 'text-zinc-800',
+      muted: 'text-zinc-500',
+      success: 'text-emerald-600',
+      info: 'text-sky-600',
+      error: 'text-rose-600',
+    },
+  },
+  phosphor: {
+    bg: 'bg-black',
+    text: 'text-[#4ade80]',
+    caret: 'caret-[#4ade80]',
+    promptUser: 'text-[#86efac]',
+    promptPath: 'text-[#2e7d32]',
+    promptMark: 'text-[#4ade80]',
+    tones: {
+      default: 'text-[#4ade80]',
+      muted: 'text-[#2e7d32]',
+      success: 'text-[#bbf7d0]',
+      info: 'text-[#6ee7b7]',
+      error: 'text-[#f87171]',
+    },
+  },
 }
 
 const PROMPT_USER = 'namish@namishos'
@@ -39,8 +90,10 @@ const SYSINFO_LOGO = [
 
 const TERMINAL_COMMANDS = [
   'help', 'whoami', 'about', 'projects', 'skills', 'experience',
-  'contact', 'open', 'echo', 'date', 'sysinfo', 'clear', 'exit', 'sudo',
+  'contact', 'open', 'echo', 'date', 'theme', 'sysinfo', 'clear', 'exit', 'sudo',
 ]
+
+export const TERMINAL_THEMES: TerminalTheme[] = ['dark', 'light', 'phosphor']
 
 function formatUptime(ms: number): string {
   const s = Math.max(0, Math.floor(ms / 1000))
@@ -66,6 +119,7 @@ const HELP: Line[] = [
   { kind: 'out', text: '  open <name>  Open a folder (try: projects)', tone: 'default' },
   { kind: 'out', text: '  echo <text>  Say something back', tone: 'default' },
   { kind: 'out', text: '  date         Current date and time', tone: 'default' },
+  { kind: 'out', text: '  theme <name> Switch terminal theme (dark, light, phosphor)', tone: 'default' },
   { kind: 'out', text: '  sysinfo      System information (neofetch-style)', tone: 'default' },
   { kind: 'out', text: '  clear        Clear the screen', tone: 'default' },
   { kind: 'out', text: '  exit         Close this terminal', tone: 'default' },
@@ -110,19 +164,21 @@ function completionFor(input: string): Completion | null {
   return { base: '', fragment: input, candidates }
 }
 
-function Prompt() {
+function Prompt({ palette }: { palette: TerminalPalette }) {
   return (
     <span className="shrink-0 select-none">
-      <span className="font-semibold text-emerald-300">{PROMPT_USER}</span>
-      <span className="text-zinc-400"> {PROMPT_PATH} </span>
-      <span className="text-zinc-100">%</span>
-      <span className="text-zinc-100">&nbsp;</span>
+      <span className={`font-semibold ${palette.promptUser}`}>{PROMPT_USER}</span>
+      <span className={palette.promptPath}> {PROMPT_PATH} </span>
+      <span className={palette.promptMark}>%</span>
+      <span className={palette.promptMark}>&nbsp;</span>
     </span>
   )
 }
 
 export default function TerminalApp({ winId }: { winId: string }) {
   const { openApp, closeWindow } = useWindows()
+  const { terminalTheme, setTerminalTheme } = useAppearance()
+  const palette = TERMINAL_PALETTES[terminalTheme]
   const [lines, setLines] = useState<Line[]>(WELCOME)
   const [value, setValue] = useState('')
   const historyRef = useRef<string[]>([])
@@ -155,6 +211,7 @@ export default function TerminalApp({ winId }: { winId: string }) {
       'Kernel: browser-native',
       `Uptime: ${formatUptime(Date.now() - SESSION_START)}`,
       'Shell: zsh (web edition)',
+      `Terminal: ${terminalTheme} theme`,
       typeof window !== 'undefined'
         ? `Resolution: ${window.innerWidth}x${window.innerHeight}`
         : 'Resolution: unknown',
@@ -251,6 +308,16 @@ export default function TerminalApp({ winId }: { winId: string }) {
       case 'date':
         push(out(new Date().toString(), 'default'))
         break
+      case 'theme': {
+        const wanted = arg.toLowerCase() as TerminalTheme
+        if (TERMINAL_THEMES.includes(wanted)) {
+          setTerminalTheme(wanted)
+          push(out(`Terminal theme set to ${wanted}.`, 'success'))
+        } else {
+          push(out(`Usage: theme <dark|light|phosphor>  (current: ${terminalTheme})`, 'error'))
+        }
+        break
+      }
       case 'sysinfo':
         push(sysinfoLines())
         break
@@ -329,30 +396,32 @@ export default function TerminalApp({ winId }: { winId: string }) {
 
   return (
     <div
-      className="selectable flex min-h-0 flex-1 flex-col bg-[#101014]/95"
+      className={`selectable relative flex min-h-0 flex-1 flex-col ${palette.bg} ${
+        terminalTheme === 'phosphor' ? 'terminal-phosphor' : ''
+      }`}
       onClick={() => inputRef.current?.focus()}
     >
       <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto px-4 py-3 font-mono text-[13px] leading-[1.55]">
         {lines.map((l, i) =>
           l.kind === 'in' ? (
             <div key={i} className="flex whitespace-pre-wrap break-words">
-              <Prompt />
-              <span className="text-zinc-100">{l.text}</span>
+              <Prompt palette={palette} />
+              <span className={palette.text}>{l.text}</span>
             </div>
           ) : (
-            <div key={i} className={`whitespace-pre-wrap break-words ${toneClass[l.tone]}`}>
+            <div key={i} className={`whitespace-pre-wrap break-words ${palette.tones[l.tone]}`}>
               {l.text === '' ? '\u00a0' : l.text}
             </div>
           ),
         )}
         <div className="flex items-center">
-          <Prompt />
+          <Prompt palette={palette} />
           <input
             ref={inputRef}
             value={value}
             onChange={(e) => setValue(e.target.value)}
             onKeyDown={onKeyDown}
-            className="min-w-0 flex-1 bg-transparent font-mono text-[13px] text-zinc-100 caret-emerald-300 outline-none"
+            className={`min-w-0 flex-1 bg-transparent font-mono text-[13px] ${palette.text} ${palette.caret} outline-none`}
             autoComplete="off"
             autoCapitalize="off"
             autoCorrect="off"
