@@ -68,7 +68,7 @@ export default function MenuBar() {
     windows,
     openApp,
     closeWindow,
-    minimizeWindow,
+    beginGenieMinimize,
     toggleMaximize,
     focusWindow,
     setFinderView,
@@ -132,7 +132,7 @@ export default function MenuBar() {
         if (topWindow) closeWindow(topWindow.id)
         break
       case 'minimize':
-        if (topWindow) minimizeWindow(topWindow.id)
+        if (topWindow) beginGenieMinimize(topWindow.id)
         break
       case 'zoom':
         if (topWindow) toggleMaximize(topWindow.id)

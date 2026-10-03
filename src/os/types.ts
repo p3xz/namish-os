@@ -31,6 +31,10 @@ export interface OSWindow {
   folderPath?: string[]
   /** Quick Look payload */
   quickLook?: { kind: 'text' | 'project' | 'image' | 'contact'; ref: string; title: string }
+  /** Genie minimize/restore animation currently in flight. The window hides instantly while the overlay animates the slices. */
+  genieAnim?: 'out' | 'in' | null
+  /** Skip the window transition for a single frame (set right after a genie restore completes). */
+  snap?: boolean
 }
 
 export type FinderView = 'icons' | 'list'

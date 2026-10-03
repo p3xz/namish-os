@@ -11,11 +11,46 @@ import type { AppId, Bounds, FinderView, OpenAppOptions, OSWindow } from './type
 
 export type PowerAction = 'sleep' | 'lock' | 'restart' | 'shutdown'
 
+/** An in-flight genie minimize/restore animation, rendered by GenieOverlay. */
+export interface GenieRequest {
+  winId: string
+  direction: 'out' | 'in'
+  /** Window rect in viewport coords: live rect for 'out', target rect for 'in'. */
+  rect: Bounds
+  /** Center of the window's Dock icon in viewport coords. */
+  target: { x: number; y: number }
+}
+
+/** Map a window's app to the Dock icon it minimizes into. Null when the app has no Dock icon. */
+export function dockIdForApp(app: AppId): string | null {
+  switch (app) {
+    case 'files':
+    case 'quicklook':
+      return 'files'
+    case 'terminal':
+    case 'web':
+    case 'messages':
+    case 'notes':
+    case 'ai':
+    case 'insidcode':
+    case 'calculator':
+      return app
+    default:
+      return null
+  }
+}
+
 interface WindowManagerCtx {
   windows: OSWindow[]
   openApp: (app: AppId, opts?: OpenAppOptions) => void
   closeWindow: (id: string) => void
   minimizeWindow: (id: string) => void
+  /** Minimize with the genie effect; falls back to a plain minimize when no Dock target exists. */
+  beginGenieMinimize: (id: string) => void
+  /** Called by GenieOverlay when its animation completes. */
+  finishGenie: () => void
+  /** The currently running genie animation, if any. */
+  genie: GenieRequest | null
   toggleMaximize: (id: string) => void
   focusWindow: (id: string) => void
   moveWindow: (id: string, x: number, y: number) => void
@@ -132,14 +167,92 @@ export function WindowManagerProvider({
   const [windows, setWindows] = useState<OSWindow[]>([])
   const [finderView, setFinderView] = useState<FinderView>('icons')
   const [lastLaunch, setLastLaunch] = useState<{ dockId: string; at: number } | null>(null)
+  const [genie, setGenie] = useState<GenieRequest | null>(null)
   const zRef = useRef(10)
   const idRef = useRef(0)
 
-  const focusWindow = useCallback((id: string) => {
-    zRef.current += 1
-    const z = zRef.current
-    setWindows((ws) => ws.map((w) => (w.id === id ? { ...w, z, minimized: false } : w)))
+  /** Center of the window's Dock icon in viewport coords, or null when unavailable. */
+  const dockTargetFor = (app: AppId): { x: number; y: number } | null => {
+    const dockId = dockIdForApp(app)
+    if (!dockId) return null
+    const el = document.querySelector(`[data-dock-app="${dockId}"]`)
+    if (!el) return null
+    const r = el.getBoundingClientRect()
+    if (r.width === 0) return null
+    return { x: r.left + r.width / 2, y: r.top + r.height / 2 }
+  }
+
+  const minimizeWindow = useCallback((id: string) => {
+    setWindows((ws) => ws.map((w) => (w.id === id ? { ...w, minimized: true } : w)))
   }, [])
+
+  /** Minimize with the true macOS-style genie effect. Only one genie runs at a
+   *  time; anything else (no Dock icon, another genie in flight) falls back to
+   *  the plain scale minimize so the window never gets stuck. */
+  const beginGenieMinimize = useCallback(
+    (id: string) => {
+      const win = windows.find((w) => w.id === id)
+      if (!win || win.minimized || win.genieAnim) return
+      const target = !genie ? dockTargetFor(win.app) : null
+      if (!target) {
+        minimizeWindow(id)
+        return
+      }
+      const node = document.querySelector(`#window-layer [data-window-id="${id}"]`)
+      const r = node?.getBoundingClientRect()
+      const rect: Bounds =
+        r && r.width > 4 && r.height > 4
+          ? { x: r.left, y: r.top, w: r.width, h: r.height }
+          : { ...win.bounds }
+      setGenie({ winId: id, direction: 'out', rect, target })
+      setWindows((ws) => ws.map((w) => (w.id === id ? { ...w, genieAnim: 'out' as const } : w)))
+    },
+    [windows, genie, minimizeWindow],
+  )
+
+  /** Apply the end state once a genie animation completes. */
+  const finishGenie = useCallback(() => {
+    if (!genie) return
+    const g = genie
+    setGenie(null)
+    if (g.direction === 'out') {
+      setWindows((ws) =>
+        ws.map((w) => (w.id === g.winId ? { ...w, minimized: true, genieAnim: null } : w)),
+      )
+    } else {
+      zRef.current += 1
+      const z = zRef.current
+      setWindows((ws) =>
+        ws.map((w) =>
+          w.id === g.winId ? { ...w, minimized: false, genieAnim: null, z, snap: true } : w,
+        ),
+      )
+      // Clear the snap flag after the frame paints so later moves animate normally.
+      window.setTimeout(() => {
+        setWindows((ws) => ws.map((w) => (w.id === g.winId ? { ...w, snap: false } : w)))
+      }, 100)
+    }
+  }, [genie])
+
+  const focusWindow = useCallback(
+    (id: string) => {
+      const win = windows.find((w) => w.id === id)
+      if (!win || win.genieAnim) return
+      if (win.minimized) {
+        // Restore with the genie effect: the window un-sucks out of the Dock.
+        const target = !genie ? dockTargetFor(win.app) : null
+        if (target) {
+          setGenie({ winId: id, direction: 'in', rect: { ...win.bounds }, target })
+          setWindows((ws) => ws.map((w) => (w.id === id ? { ...w, genieAnim: 'in' as const } : w)))
+          return
+        }
+      }
+      zRef.current += 1
+      const z = zRef.current
+      setWindows((ws) => ws.map((w) => (w.id === id ? { ...w, z, minimized: false } : w)))
+    },
+    [windows, genie],
+  )
 
   const openApp = useCallback(
     (app: AppId, opts?: OpenAppOptions) => {
@@ -172,10 +285,6 @@ export function WindowManagerProvider({
 
   const closeWindow = useCallback((id: string) => {
     setWindows((ws) => ws.filter((w) => w.id !== id))
-  }, [])
-
-  const minimizeWindow = useCallback((id: string) => {
-    setWindows((ws) => ws.map((w) => (w.id === id ? { ...w, minimized: true } : w)))
   }, [])
 
   const toggleMaximize = useCallback((id: string) => {
@@ -225,6 +334,9 @@ export function WindowManagerProvider({
     openApp,
     closeWindow,
     minimizeWindow,
+    beginGenieMinimize,
+    finishGenie,
+    genie,
     toggleMaximize,
     focusWindow,
     moveWindow,

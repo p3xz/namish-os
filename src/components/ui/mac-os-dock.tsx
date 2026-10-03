@@ -305,6 +305,7 @@ const MacOSDock: React.FC<MacOSDockProps> = ({
             <div
               key={app.id}
               ref={(el) => { iconRefs.current[index] = el; }}
+              data-dock-app={app.id}
               className="absolute cursor-pointer flex flex-col items-center justify-end"
               title={app.name}
               onClick={() => handleAppClick(app.id, index)}

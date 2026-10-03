@@ -5,6 +5,7 @@ import Dock from './Dock'
 import Spotlight from './Spotlight'
 import MissionControl from './MissionControl'
 import WindowLayer from './WindowLayer'
+import GenieOverlay from './GenieOverlay'
 import MacFolder from './MacFolder'
 import { MessagesIcon, AIIcon, InsidCodeIcon } from './MacSquircleIcon'
 import { desktopFolders } from '@/os/filesystem'
@@ -16,6 +17,7 @@ export default function Desktop() {
       <Wallpaper />
       <DesktopIcons />
       <WindowLayer />
+      <GenieOverlay />
       <MenuBar />
       <Dock />
       <Spotlight />

@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import MacOSDock from './ui/mac-os-dock'
-import { useWindows } from '@/os/WindowManager'
+import { useWindows, dockIdForApp } from '@/os/WindowManager'
 
 /**
  * Original glossy app icon artwork rendered as SVG data URIs.
@@ -159,26 +159,6 @@ const DOCK_APPS: DockEntry[] = [
   { id: 'calculator', name: 'Calculator', icon: ICONS.calculator },
   { id: 'trash', name: 'Trash', icon: ICONS.trash },
 ]
-
-/** Map running windows to dock entries for the indicator dots. */
-function dockIdForApp(app: string): string | null {
-  switch (app) {
-    case 'files':
-    case 'quicklook':
-      return 'files'
-    case 'terminal':
-    case 'web':
-    case 'messages':
-    case 'notes':
-    case 'ai':
-    case 'insidcode':
-      return app
-    case 'calculator':
-      return 'calculator'
-    default:
-      return null
-  }
-}
 
 export default function Dock() {
   const { windows, openApp, lastLaunch } = useWindows()

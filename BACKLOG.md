@@ -14,7 +14,7 @@ One item ships per daily commit. Every item below is a genuine, noticeable featu
 
 ## Finder and files
 
-- [ ] Genie minimize effect: true macOS-style genie animation when a window minimizes into the Dock (smooth scale minimize/restore already ships)
+- [x] Genie minimize effect: true macOS-style genie animation when a window minimizes into the Dock (smooth scale minimize/restore already ships)
 - [ ] Finder gallery view: a third view mode with large previews alongside the file list
 - [ ] Finder search: filter the current folder's contents from the toolbar
 - [ ] Right-click context menus: on the desktop (change wallpaper, open Terminal here) and on files (Open, Quick Look, Copy link)

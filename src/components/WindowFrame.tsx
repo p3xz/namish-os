@@ -46,7 +46,7 @@ export default function WindowFrame({
   tone?: WindowTone
   children: ReactNode
 }) {
-  const { closeWindow, minimizeWindow, toggleMaximize, focusWindow, moveWindow } = useWindows()
+  const { closeWindow, beginGenieMinimize, toggleMaximize, focusWindow, moveWindow } = useWindows()
   const [dragging, setDragging] = useState(false)
 
   const onTitlePointerDown = (e: React.PointerEvent) => {
@@ -75,9 +75,13 @@ export default function WindowFrame({
 
   const minimizeY = typeof window === 'undefined' ? 600 : window.innerHeight - win.bounds.y
   const dark = tone === 'dark'
+  // While a genie animation is in flight the window hides instantly; the
+  // GenieOverlay animates slices of a live clone instead.
+  const genieRunning = win.genieAnim != null
 
   return (
     <motion.div
+      data-window-id={win.id}
       initial={{
         opacity: 0,
         scale: 0.9,
@@ -87,33 +91,37 @@ export default function WindowFrame({
         height: win.bounds.h,
       }}
       animate={
-        win.minimized
-          ? {
-              opacity: 0,
-              scale: 0.05,
-              x: win.bounds.x,
-              y: minimizeY,
-              width: win.bounds.w,
-              height: win.bounds.h,
-              transition: { duration: 0.28, ease: 'easeIn' },
-            }
-          : {
-              opacity: 1,
-              scale: 1,
-              x: win.bounds.x,
-              y: win.bounds.y,
-              width: win.bounds.w,
-              height: win.bounds.h,
-              transition: dragging
-                ? { duration: 0 }
-                : { type: 'spring', stiffness: 420, damping: 38 },
-            }
+        genieRunning
+          ? { opacity: 0, transition: { duration: 0 } }
+          : win.minimized
+            ? {
+                opacity: 0,
+                scale: 0.05,
+                x: win.bounds.x,
+                y: minimizeY,
+                width: win.bounds.w,
+                height: win.bounds.h,
+                transition: { duration: 0.28, ease: 'easeIn' },
+              }
+            : {
+                opacity: 1,
+                scale: 1,
+                x: win.bounds.x,
+                y: win.bounds.y,
+                width: win.bounds.w,
+                height: win.bounds.h,
+                transition: win.snap
+                  ? { duration: 0 }
+                  : dragging
+                    ? { duration: 0 }
+                    : { type: 'spring', stiffness: 420, damping: 38 },
+              }
       }
       exit={{ opacity: 0, scale: 0.92, transition: { duration: 0.15, ease: 'easeIn' } }}
       style={{
         zIndex: win.z,
         transformOrigin: '50% 100%',
-        pointerEvents: win.minimized ? 'none' : 'auto',
+        pointerEvents: win.minimized || genieRunning ? 'none' : 'auto',
       }}
       className={`absolute left-0 top-0 flex flex-col overflow-hidden rounded-xl border backdrop-blur-2xl ${
         dark
@@ -134,7 +142,7 @@ export default function WindowFrame({
           <TrafficButton color="#ff5f57" hoverBg="text-red-900" label="Close" onClick={() => closeWindow(win.id)}>
             <X size={8} strokeWidth={3} />
           </TrafficButton>
-          <TrafficButton color="#febc2e" hoverBg="text-amber-900" label="Minimize" onClick={() => minimizeWindow(win.id)}>
+          <TrafficButton color="#febc2e" hoverBg="text-amber-900" label="Minimize" onClick={() => beginGenieMinimize(win.id)}>
             <Minus size={8} strokeWidth={3} />
           </TrafficButton>
           <TrafficButton color="#28c840" hoverBg="text-green-900" label="Zoom" onClick={() => toggleMaximize(win.id)}>

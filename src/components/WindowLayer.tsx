@@ -59,7 +59,7 @@ export default function WindowLayer() {
   const { windows } = useWindows()
 
   return (
-    <div className="pointer-events-none absolute inset-0 z-40">
+    <div id="window-layer" className="pointer-events-none absolute inset-0 z-40">
       <AnimatePresence>
         {windows.map((win) => (
           <WindowFrame key={win.id} win={win} tone={TONES[win.app]}>
