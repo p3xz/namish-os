@@ -37,7 +37,7 @@ export interface OSWindow {
   snap?: boolean
 }
 
-export type FinderView = 'icons' | 'list'
+export type FinderView = 'icons' | 'list' | 'gallery'
 
 export interface OpenAppOptions {
   folderPath?: string[]
