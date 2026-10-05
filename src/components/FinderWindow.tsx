@@ -9,6 +9,7 @@ import {
   List,
   Search,
   Trash2,
+  X,
 } from 'lucide-react'
 import { useWindows } from '@/os/WindowManager'
 import { getFolderAt, homeFolder, textDocs, trashFolder, type FSEntry, type FSFolder } from '@/os/filesystem'
@@ -75,6 +76,34 @@ function kindLabel(entry: FSEntry): string {
     default:
       return 'Text'
   }
+}
+
+/** Entry name with the current search query highlighted in place, macOS-style. */
+function HighlightedName({
+  name,
+  query,
+  selected = false,
+}: {
+  name: string
+  query: string
+  selected?: boolean
+}) {
+  const q = query.trim().toLowerCase()
+  const idx = q ? name.toLowerCase().indexOf(q) : -1
+  if (idx === -1) return <>{name}</>
+  return (
+    <>
+      {name.slice(0, idx)}
+      <mark
+        className={`rounded-[3px] px-px ${
+          selected ? 'bg-white/45 text-inherit' : 'bg-[#0a84ff]/25 text-inherit'
+        }`}
+      >
+        {name.slice(idx, idx + q.length)}
+      </mark>
+      {name.slice(idx + q.length)}
+    </>
+  )
 }
 
 /** Large-format preview used by the gallery view: a macOS-style zoomed look at one entry. */
@@ -204,7 +233,7 @@ interface SidebarItem {
 }
 
 export default function FinderWindow({ win }: { win: OSWindow }) {
-  const { setFolderPath, openApp, finderView, setFinderView } = useWindows()
+  const { setFolderPath, openApp, finderView, setFinderView, topWindow } = useWindows()
   const path = win.folderPath ?? []
   const folder: FSFolder = getFolderAt(path)
 
@@ -213,12 +242,27 @@ export default function FinderWindow({ win }: { win: OSWindow }) {
   const [selected, setSelected] = useState<string | null>(null)
   const [query, setQuery] = useState('')
   const thumbRefs = useRef(new Map<string, HTMLButtonElement>())
+  const searchRef = useRef<HTMLInputElement>(null)
 
   // Clear selection whenever the folder itself changes (e.g. from the sidebar or dock)
   useEffect(() => {
     setSelected(null)
     setQuery('')
   }, [path.join('/')])
+
+  // Cmd+F focuses the search box of the topmost Finder window, macOS-style.
+  useEffect(() => {
+    if (topWindow?.id !== win.id) return
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'f') {
+        e.preventDefault()
+        searchRef.current?.focus()
+        searchRef.current?.select()
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [topWindow?.id, win.id])
 
   const navigate = (p: string[]) => {
     if (pathsEqual(p, path)) return
@@ -365,11 +409,31 @@ export default function FinderWindow({ win }: { win: OSWindow }) {
         <div className="flex w-40 items-center gap-1.5 rounded-lg border border-black/10 bg-white px-2 py-1 sm:w-48">
           <Search size={13} className="shrink-0 text-neutral-400" />
           <input
+            ref={searchRef}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Escape' && query) {
+                setQuery('')
+                e.currentTarget.blur()
+              }
+            }}
             placeholder="Search"
+            aria-label="Search folder"
             className="selectable min-w-0 flex-1 bg-transparent text-[12.5px] outline-none placeholder:text-neutral-400"
           />
+          {query && (
+            <button
+              onClick={() => {
+                setQuery('')
+                searchRef.current?.focus()
+              }}
+              aria-label="Clear search"
+              className="shrink-0 rounded-full p-0.5 text-neutral-400 transition-colors hover:bg-black/10 hover:text-neutral-600"
+            >
+              <X size={12} />
+            </button>
+          )}
         </div>
       </div>
 
@@ -435,7 +499,7 @@ export default function FinderWindow({ win }: { win: OSWindow }) {
                         isSel ? 'bg-[#0a84ff] text-white' : 'text-neutral-800'
                       }`}
                     >
-                      {entry.name}
+                      <HighlightedName name={entry.name} query={query} selected={isSel} />
                     </span>
                   </button>
                 )
@@ -485,7 +549,7 @@ export default function FinderWindow({ win }: { win: OSWindow }) {
                     >
                       <FileIcon entry={entry} size={44} />
                       <span className="max-w-full truncate text-[10.5px] leading-tight text-neutral-700">
-                        {entry.name}
+                        <HighlightedName name={entry.name} query={query} />
                       </span>
                     </button>
                   )
@@ -516,7 +580,7 @@ export default function FinderWindow({ win }: { win: OSWindow }) {
                     <span
                       className={`flex-1 truncate text-[13px] ${isSel ? 'text-white' : 'text-neutral-800'}`}
                     >
-                      {entry.name}
+                      <HighlightedName name={entry.name} query={query} selected={isSel} />
                     </span>
                     <span
                       className={`w-24 truncate text-right text-[12px] ${isSel ? 'text-white/85' : 'text-neutral-400'}`}
