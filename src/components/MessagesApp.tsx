@@ -160,6 +160,7 @@ export default function MessagesApp() {
                 if (e.key === 'Enter') send()
               }}
               placeholder="iMessage"
+              aria-label="Message"
               className="selectable min-w-0 flex-1 bg-transparent text-[13.5px] outline-none placeholder:text-neutral-400"
             />
             <button
