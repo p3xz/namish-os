@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { ArrowUp, AtSign, Code2, Globe, Mail, Share2 } from 'lucide-react'
+import { ArrowUp, AtSign, Code2, Globe, Instagram, Linkedin, Mail, Share2 } from 'lucide-react'
 import { profile } from '@/data/portfolio'
 
 interface Message {
@@ -23,6 +23,8 @@ const now = () =>
 const LINKS = [
   { label: 'Email', value: profile.email, href: `mailto:${profile.email}`, Icon: Mail },
   { label: 'GitHub', value: 'github.com/p3xz', href: profile.github, Icon: Code2 },
+  { label: 'LinkedIn', value: 'namish-yadav-639769408', href: profile.linkedin, Icon: Linkedin },
+  { label: 'Instagram', value: '@nam7sh', href: profile.instagram, Icon: Instagram },
   { label: 'X', value: '@NamishYadavv', href: profile.x, Icon: AtSign },
   { label: 'InsidCode', value: 'insidcode.vercel.app', href: 'https://insidcode.vercel.app', Icon: Globe },
   { label: 'Portfolio', value: 'namishhh.vercel.app', href: profile.portfolio, Icon: Share2 },

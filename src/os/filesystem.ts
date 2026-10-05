@@ -28,6 +28,8 @@ const contactBody = [
   '',
   `Email: ${profile.email}`,
   `GitHub: ${profile.github}`,
+  `LinkedIn: ${profile.linkedin}`,
+  `Instagram: ${profile.instagram}`,
   `X: ${profile.x}`,
   `Website: ${profile.website}`,
   `Portfolio: ${profile.portfolio}`,
@@ -96,6 +98,22 @@ const cookiesBody = [
   'Questions: nam4sh@gmail.com',
 ].join('\n')
 
+const creditsBody = [
+  'Credits',
+  '',
+  'NamishOS is designed and built by Namish Yadav.',
+  '',
+  'Social links:',
+  `  GitHub: ${profile.github}`,
+  `  LinkedIn: ${profile.linkedin}`,
+  `  Instagram: ${profile.instagram}`,
+  `  Portfolio: ${profile.portfolio}`,
+  '',
+  'Built with React, TypeScript, Vite, and Tailwind CSS.',
+  'The macOS-inspired interface is an original homage built from scratch.',
+  'Not affiliated with or endorsed by Apple Inc.',
+].join('\n')
+
 const legalBody = [
   'Legal Notice',
   '',
@@ -140,6 +158,7 @@ export const textDocs: Record<string, TextDoc> = {
   privacy: { title: 'privacy.txt', body: privacyBody },
   terms: { title: 'terms.txt', body: termsBody },
   cookies: { title: 'cookies.txt', body: cookiesBody },
+  credits: { title: 'credits.txt', body: creditsBody },
   legal: { title: 'legal.txt', body: legalBody },
   trash: {
     title: 'readme.txt',
@@ -230,6 +249,7 @@ export const homeFolder: FSFolder = {
         { name: 'privacy.txt', type: 'file', kind: 'text', ref: 'privacy' },
         { name: 'terms.txt', type: 'file', kind: 'text', ref: 'terms' },
         { name: 'cookies.txt', type: 'file', kind: 'text', ref: 'cookies' },
+        { name: 'credits.txt', type: 'file', kind: 'text', ref: 'credits' },
         { name: 'legal.txt', type: 'file', kind: 'text', ref: 'legal' },
       ],
     },

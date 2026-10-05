@@ -37,6 +37,8 @@ export const profile = {
   bio: '18-year-old BCA student building full-stack web applications. My working stack is TypeScript, Next.js, Tailwind CSS and MongoDB. I care about clean, type-safe code and I document my learning in public.',
   email: 'nam4sh@gmail.com',
   github: 'https://github.com/p3xz',
+  linkedin: 'https://linkedin.com/in/namish-yadav-639769408',
+  instagram: 'https://instagram.com/nam7sh',
   x: 'https://x.com/NamishYadavv',
   website: 'https://namishhh.vercel.app',
   portfolio: 'https://namishhh.vercel.app',
