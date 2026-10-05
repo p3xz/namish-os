@@ -22,6 +22,7 @@ export default function App() {
   return (
     <WindowManagerProvider powerAction={powerAction}>
       <AppearanceProvider>
+        <h1 className="sr-only">NamishOS, the portfolio of Namish Yadav</h1>
         <AnimatePresence>
           {phase === 'boot' && <BootScreen key="boot" onDone={() => setPhase('desktop')} />}
         </AnimatePresence>

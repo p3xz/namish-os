@@ -221,7 +221,7 @@ export default function TerminalApp({ winId }: { winId: string }) {
     const width = Math.max(...SYSINFO_LOGO.map((l) => l.length))
     const rows: Line[] = [
       out('namish@namishos', 'success'),
-      out('---------------', 'muted'),
+      out('─'.repeat('namish@namishos'.length), 'muted'),
     ]
     for (let i = 0; i < Math.max(SYSINFO_LOGO.length, info.length); i++) {
       const logo = (SYSINFO_LOGO[i] ?? '').padEnd(width)
