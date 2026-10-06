@@ -1,21 +1,38 @@
 # NamishOS
 
+## What
+
 A portfolio for **Namish Yadav**, reimagined as a complete desktop operating system. Boot it up, open folders, launch apps from the Dock, and run commands in a real interactive terminal. Everything on screen is portfolio content: bio, projects, experience, skills, and contact links.
 
-## Run it
+## Why
 
-```bash
-npm install
-npm run dev      # local dev server
-npm run build    # production build (tsc + vite)
-```
+A portfolio piece, built because a static page felt flat. The desktop metaphor turns the content into something to explore: projects live in Finder and Quick Look, skills and experience answer in the Terminal, and the whole thing rewards clicking around.
 
-## Tech Stack
+## When
+
+Built in September 2026, and developed one feature per day from [BACKLOG.md](./BACKLOG.md) ever since.
+
+## What we used
 
 - React 19 + TypeScript + Vite
 - Tailwind CSS v4
 - Framer Motion (window, menu, dock, and boot animations)
 - lucide-react (every icon on screen)
+
+## Why we used this
+
+- React + TypeScript: the entire desktop is interactive UI state (windows, focus, minimize, zoom, drag), and TypeScript keeps the window manager and virtual filesystem types honest.
+- Vite: fast dev server, and the production build runs the TypeScript compiler before bundling.
+- Tailwind CSS v4: all styling, including the hand-built aurora wallpaper gradient and the original icon artwork.
+- Framer Motion: the macOS-style animations: spring window zoom on maximize and restore, the dock launch bounce, popover pop-ins, and the boot sequence.
+- lucide-react: every icon on screen is a lucide glyph inside an original gradient shape, so nothing is copied from Apple.
+
+## How it works
+
+- `App.tsx` drives the OS phases: boot, lock screen, desktop, plus sleep and shutdown.
+- `os/WindowManager.tsx` holds all window state (open, focus, minimize, zoom, drag, resize), and `components/WindowLayer.tsx` renders every open window inside draggable `WindowFrame` chrome.
+- A virtual filesystem (`os/filesystem.ts`) powers Finder and Spotlight, and text documents plus project cards preview in Quick Look.
+- All real portfolio content lives in `src/data/portfolio.ts`, so the apps, terminal, and browser mock all render the same bio, projects, skills, experience, and links.
 
 ## Key features
 
@@ -61,6 +78,14 @@ src/
       mac-os-dock.tsx     # dock with cosine magnification
       mac-os-menu-bar.tsx # menu bar with dropdowns
       filesystem-item.tsx # animated file-tree for the sidebar
+```
+
+## Getting started
+
+```bash
+npm install
+npm run dev      # local dev server
+npm run build    # production build (tsc + vite)
 ```
 
 ## What is real vs homage
