@@ -17,7 +17,7 @@ One item ships per daily commit. Every item below is a genuine, noticeable featu
 - [x] Genie minimize effect: true macOS-style genie animation when a window minimizes into the Dock (smooth scale minimize/restore already ships)
 - [x] Finder gallery view: a third view mode with large previews alongside the file list
 - [x] Finder search: filter the current folder's contents from the toolbar
-- [ ] Right-click context menus: on the desktop (change wallpaper, open Terminal here) and on files (Open, Quick Look, Copy link)
+- [x] Right-click context menus: on the desktop (change wallpaper, open Terminal here) and on files (Open, Quick Look, Copy link)
 - [ ] Window snapping: drag a window to a screen edge to snap it to half or full screen
 - [ ] Global keyboard shortcuts: Cmd+W closes, Cmd+M minimizes, Cmd+1/Cmd+2 switch Finder views
 - [ ] Quick Look slideshow: arrow-key navigation through images and project cards without closing the preview

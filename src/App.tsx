@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { WindowManagerProvider, type PowerAction } from './os/WindowManager'
+import { WindowManagerProvider, type PowerAction, useWindows } from './os/WindowManager'
 import { AppearanceProvider } from './os/Appearance'
+import { resolveHash, findEntryAt } from './os/deeplinks'
 import BootScreen from './components/BootScreen'
 import LockScreen from './components/LockScreen'
 import Desktop from './components/Desktop'
@@ -23,6 +24,7 @@ export default function App() {
     <WindowManagerProvider powerAction={powerAction}>
       <AppearanceProvider>
         <h1 className="sr-only">NamishOS, the portfolio of Namish Yadav</h1>
+        <DeepLinkHandler />
         <AnimatePresence>
           {phase === 'boot' && <BootScreen key="boot" onDone={() => setPhase('desktop')} />}
         </AnimatePresence>
@@ -41,6 +43,34 @@ export default function App() {
       </AppearanceProvider>
     </WindowManagerProvider>
   )
+}
+
+/**
+ * Opens the file or folder named by a shared deep link like
+ * `#/file/Projects/Rideoxy` (see "Copy Link" in the Finder context menu).
+ * Runs once at boot; the window is waiting on the desktop when it appears.
+ */
+function DeepLinkHandler() {
+  const { openApp } = useWindows()
+  const opened = useRef(false)
+
+  useEffect(() => {
+    if (opened.current) return
+    opened.current = true
+    const path = resolveHash(window.location.hash)
+    if (!path) return
+    const entry = findEntryAt(path)
+    if (!entry) return
+    if (entry.type === 'folder') {
+      openApp('files', { folderPath: path })
+    } else {
+      openApp('quicklook', {
+        quickLook: { kind: entry.kind, ref: entry.ref, title: entry.name },
+      })
+    }
+  }, [openApp])
+
+  return null
 }
 
 function SleepOverlay({ onWake }: { onWake: () => void }) {

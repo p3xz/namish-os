@@ -2,10 +2,13 @@ import { useEffect, useMemo, useRef, useState, type KeyboardEvent as ReactKeyboa
 import {
   ChevronLeft,
   ChevronRight,
+  Eye,
   FileCode2,
+  FolderOpen,
   GalleryHorizontal,
   House,
   LayoutGrid,
+  Link2,
   List,
   Search,
   Trash2,
@@ -13,8 +16,10 @@ import {
 } from 'lucide-react'
 import { useWindows } from '@/os/WindowManager'
 import { getFolderAt, homeFolder, textDocs, trashFolder, type FSEntry, type FSFolder } from '@/os/filesystem'
+import { deepLinkFor } from '@/os/deeplinks'
 import { profile, projects } from '@/data/portfolio'
 import MacFolder from './MacFolder'
+import { useContextMenu, type MenuEntry } from './ContextMenu'
 import type { OSWindow } from '@/os/types'
 
 /** Original document icon artwork, tinted by file kind. */
@@ -234,6 +239,7 @@ interface SidebarItem {
 
 export default function FinderWindow({ win }: { win: OSWindow }) {
   const { setFolderPath, openApp, finderView, setFinderView, topWindow } = useWindows()
+  const { showContextMenu, contextMenu } = useContextMenu()
   const path = win.folderPath ?? []
   const folder: FSFolder = getFolderAt(path)
 
@@ -294,10 +300,68 @@ export default function FinderWindow({ win }: { win: OSWindow }) {
     if (entry.type === 'folder') {
       navigate([...path, entry.name])
     } else {
-      openApp('quicklook', {
-        quickLook: { kind: entry.kind, ref: entry.ref, title: entry.name },
+      openQuickLook(entry)
+    }
+  }
+
+  const openQuickLook = (entry: FSEntry) => {
+    if (entry.type === 'folder') return
+    openApp('quicklook', {
+      quickLook: { kind: entry.kind, ref: entry.ref, title: entry.name },
+    })
+  }
+
+  /** Copy a deep link that reopens this exact file or folder in NamishOS. */
+  const copyEntryLink = async (entry: FSEntry) => {
+    const link = deepLinkFor([...path, entry.name])
+    try {
+      await navigator.clipboard.writeText(link)
+    } catch {
+      // Clipboard API unavailable (older browser or permissions). Fall back
+      // to the legacy execCommand path.
+      const ta = document.createElement('textarea')
+      ta.value = link
+      ta.style.position = 'fixed'
+      ta.style.opacity = '0'
+      document.body.appendChild(ta)
+      ta.select()
+      try {
+        document.execCommand('copy')
+      } catch {
+        // Last resort: the link is lost, nothing more we can do silently.
+      }
+      ta.remove()
+    }
+  }
+
+  /** Right-click menu for a file or folder entry. */
+  const onEntryMenu = (e: React.MouseEvent, entry: FSEntry) => {
+    setSelected(entry.name)
+    const items: MenuEntry[] = [
+      {
+        type: 'item',
+        label: 'Open',
+        icon: <FolderOpen size={15} strokeWidth={2} />,
+        onSelect: () => openEntry(entry),
+      },
+    ]
+    if (entry.type === 'file') {
+      items.push({
+        type: 'item',
+        label: 'Quick Look',
+        icon: <Eye size={15} strokeWidth={2} />,
+        shortcut: 'Space',
+        onSelect: () => openQuickLook(entry),
       })
     }
+    items.push({ type: 'separator' })
+    items.push({
+      type: 'item',
+      label: 'Copy Link',
+      icon: <Link2 size={15} strokeWidth={2} />,
+      onSelect: () => copyEntryLink(entry),
+    })
+    showContextMenu(e, items)
   }
 
   const sidebar: SidebarItem[] = useMemo(
@@ -487,6 +551,7 @@ export default function FinderWindow({ win }: { win: OSWindow }) {
                       setSelected(entry.name)
                     }}
                     onDoubleClick={() => openEntry(entry)}
+                    onContextMenu={(e) => onEntryMenu(e, entry)}
                     className="flex flex-col items-center gap-1.5 rounded-xl px-1 py-3"
                   >
                     <span
@@ -541,6 +606,7 @@ export default function FinderWindow({ win }: { win: OSWindow }) {
                         setSelected(entry.name)
                       }}
                       onDoubleClick={() => openEntry(entry)}
+                    onContextMenu={(e) => onEntryMenu(e, entry)}
                       className={`flex w-20 shrink-0 flex-col items-center gap-1.5 rounded-lg px-1 py-2 transition-colors ${
                         isSel
                           ? 'bg-[#0a84ff]/15 ring-1 ring-[#0a84ff]/60'
@@ -572,6 +638,7 @@ export default function FinderWindow({ win }: { win: OSWindow }) {
                       setSelected(entry.name)
                     }}
                     onDoubleClick={() => openEntry(entry)}
+                    onContextMenu={(e) => onEntryMenu(e, entry)}
                     className={`flex w-full items-center gap-3 rounded-md px-3 py-[5px] text-left ${
                       isSel ? 'bg-[#0a84ff]' : 'hover:bg-black/[0.05]'
                     }`}
@@ -602,6 +669,7 @@ export default function FinderWindow({ win }: { win: OSWindow }) {
           {query ? ` matching "${query}"` : ''}
         </span>
       </div>
+      {contextMenu}
     </div>
   )
 }
