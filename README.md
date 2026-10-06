@@ -4,6 +4,8 @@
 
 ![Status](https://img.shields.io/badge/status-active-brightgreen) ![License](https://img.shields.io/badge/license-MIT-blue)
 
+![Preview](preview.png)
+
 A portfolio piece, built because a static page felt flat. The desktop metaphor turns the content into something to explore: projects live in Finder and Quick Look, skills and experience answer in the Terminal, and the whole thing rewards clicking around. Everything on screen is portfolio content: bio, projects, experience, skills, and contact links. Live at [namish-os.vercel.app](https://namish-os.vercel.app).
 
 ## Features
