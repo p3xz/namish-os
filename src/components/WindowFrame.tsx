@@ -2,8 +2,31 @@ import { motion } from 'framer-motion'
 import { Minus, Plus, X } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { useState } from 'react'
-import { useWindows } from '@/os/WindowManager'
+import { useWindows, type SnapEdge } from '@/os/WindowManager'
 import type { OSWindow } from '@/os/types'
+
+/** Pixel distance from a screen edge that counts as a snap zone while dragging. */
+const SNAP_EDGE_PX = 8
+
+/** Which edge, if any, the pointer is in the snap zone for. */
+function snapZoneAt(clientX: number, clientY: number): SnapEdge | null {
+  if (clientX <= SNAP_EDGE_PX) return 'left'
+  if (clientX >= window.innerWidth - SNAP_EDGE_PX) return 'right'
+  if (clientY <= SNAP_EDGE_PX / 2) return 'top'
+  return null
+}
+
+/** Preview rect for a snap zone, matching the snapped window geometry. */
+function snapPreviewBounds(edge: SnapEdge) {
+  const vw = window.innerWidth
+  const vh = window.innerHeight
+  const gap = 6
+  const y = 38
+  const h = vh - 46
+  if (edge === 'top') return { x: gap, y, w: vw - gap * 2, h }
+  const w = (vw - gap * 3) / 2
+  return edge === 'left' ? { x: gap, y, w, h } : { x: gap * 2 + w, y, w, h }
+}
 
 export type WindowTone = 'light' | 'dark'
 
@@ -46,8 +69,9 @@ export default function WindowFrame({
   tone?: WindowTone
   children: ReactNode
 }) {
-  const { closeWindow, beginGenieMinimize, toggleMaximize, focusWindow, moveWindow } = useWindows()
+  const { closeWindow, beginGenieMinimize, toggleMaximize, focusWindow, moveWindow, snapWindow, unsnapWindow } = useWindows()
   const [dragging, setDragging] = useState(false)
+  const [snapPreview, setSnapPreview] = useState<SnapEdge | null>(null)
 
   const onTitlePointerDown = (e: React.PointerEvent) => {
     if ((e.target as HTMLElement).closest('[data-traffic]')) return
@@ -57,17 +81,37 @@ export default function WindowFrame({
     setDragging(true)
     const startX = e.clientX
     const startY = e.clientY
-    const origX = win.bounds.x
-    const origY = win.bounds.y
-    const onMove = (ev: PointerEvent) => {
-      const nx = origX + ev.clientX - startX
-      const ny = Math.max(34, origY + ev.clientY - startY)
-      moveWindow(win.id, nx, ny)
+    let baseX: number
+    let baseY: number
+    if (win.snapped && win.prevBounds) {
+      // Dragging a snapped window frees it: restore the original size and
+      // re-anchor the drag so the cursor keeps its relative position on the
+      // title bar (macOS-style).
+      const restored = win.prevBounds
+      const frac = Math.min(
+        0.95,
+        Math.max(0.05, (e.clientX - win.bounds.x) / win.bounds.w),
+      )
+      baseX = e.clientX - restored.w * frac
+      baseY = Math.max(34, restored.y)
+      unsnapWindow(win.id)
+    } else {
+      baseX = win.bounds.x
+      baseY = win.bounds.y
     }
-    const onUp = () => {
+    const onMove = (ev: PointerEvent) => {
+      const nx = baseX + ev.clientX - startX
+      const ny = Math.max(34, baseY + ev.clientY - startY)
+      moveWindow(win.id, nx, ny)
+      setSnapPreview(snapZoneAt(ev.clientX, ev.clientY))
+    }
+    const onUp = (ev: PointerEvent) => {
       setDragging(false)
+      setSnapPreview(null)
       window.removeEventListener('pointermove', onMove)
       window.removeEventListener('pointerup', onUp)
+      const zone = snapZoneAt(ev.clientX, ev.clientY)
+      if (zone) snapWindow(win.id, zone)
     }
     window.addEventListener('pointermove', onMove)
     window.addEventListener('pointerup', onUp)
@@ -79,8 +123,18 @@ export default function WindowFrame({
   // GenieOverlay animates slices of a live clone instead.
   const genieRunning = win.genieAnim != null
 
+  const preview = snapPreview ? snapPreviewBounds(snapPreview) : null
+
   return (
-    <motion.div
+    <>
+      {preview && (
+        <div
+          aria-hidden
+          className="pointer-events-none fixed z-[5] rounded-xl border-2 border-sky-400/70 bg-sky-400/20 transition-all duration-150 ease-out"
+          style={{ left: preview.x, top: preview.y, width: preview.w, height: preview.h }}
+        />
+      )}
+      <motion.div
       data-window-id={win.id}
       initial={{
         opacity: 0,
@@ -163,5 +217,6 @@ export default function WindowFrame({
       {/* Content */}
       <div className="flex min-h-0 flex-1 flex-col">{children}</div>
     </motion.div>
+    </>
   )
 }

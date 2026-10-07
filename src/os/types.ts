@@ -33,6 +33,9 @@ export interface OSWindow {
   quickLook?: { kind: 'text' | 'project' | 'image' | 'contact'; ref: string; title: string }
   /** Genie minimize/restore animation currently in flight. The window hides instantly while the overlay animates the slices. */
   genieAnim?: 'out' | 'in' | null
+  /** macOS-style edge snap state. Snapped windows remember their previous
+   *  bounds so dragging the title bar restores them. */
+  snapped?: 'left' | 'right' | null
   /** Skip the window transition for a single frame (set right after a genie restore completes). */
   snap?: boolean
 }

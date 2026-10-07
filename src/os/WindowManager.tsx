@@ -11,6 +11,23 @@ import type { AppId, Bounds, FinderView, OpenAppOptions, OSWindow } from './type
 
 export type PowerAction = 'sleep' | 'lock' | 'restart' | 'shutdown'
 
+/** Edge a window can be snapped to: left/right half, or top for fullscreen. */
+export type SnapEdge = 'left' | 'right' | 'top'
+
+/** Bounds for a window snapped to a screen edge, matching maximize geometry. */
+function snapBounds(edge: SnapEdge): Bounds {
+  const vw = window.innerWidth
+  const vh = window.innerHeight
+  const gap = 6
+  const y = 38
+  const h = vh - 46
+  if (edge === 'top') return { x: gap, y, w: vw - gap * 2, h }
+  const w = (vw - gap * 3) / 2
+  return edge === 'left'
+    ? { x: gap, y, w, h }
+    : { x: gap * 2 + w, y, w, h }
+}
+
 /** An in-flight genie minimize/restore animation, rendered by GenieOverlay. */
 export interface GenieRequest {
   winId: string
@@ -54,6 +71,10 @@ interface WindowManagerCtx {
   toggleMaximize: (id: string) => void
   focusWindow: (id: string) => void
   moveWindow: (id: string, x: number, y: number) => void
+  /** Snap a window to a screen edge: left/right halves, or top for fullscreen. */
+  snapWindow: (id: string, edge: SnapEdge) => void
+  /** Restore a snapped window to its pre-snap bounds. */
+  unsnapWindow: (id: string) => void
   setFolderPath: (id: string, path: string[]) => void
   finderView: FinderView
   setFinderView: (v: FinderView) => void
@@ -310,6 +331,32 @@ export function WindowManagerProvider({
     setWindows((ws) => ws.map((w) => (w.id === id ? { ...w, bounds: { ...w.bounds, x, y } } : w)))
   }, [])
 
+  const snapWindow = useCallback((id: string, edge: SnapEdge) => {
+    setWindows((ws) =>
+      ws.map((w) => {
+        if (w.id !== id || w.minimized || w.genieAnim) return w
+        // Preserve the pre-snap bounds so a drag restores them; re-snapping a
+        // snapped window keeps the original bounds.
+        const prev = w.snapped || w.maximized ? w.prevBounds : w.bounds
+        if (!prev) return w
+        if (edge === 'top') {
+          return { ...w, maximized: true, snapped: null, prevBounds: prev, bounds: snapBounds(edge) }
+        }
+        return { ...w, maximized: false, snapped: edge, prevBounds: prev, bounds: snapBounds(edge) }
+      }),
+    )
+  }, [])
+
+  const unsnapWindow = useCallback((id: string) => {
+    setWindows((ws) =>
+      ws.map((w) =>
+        w.id === id && w.snapped && w.prevBounds
+          ? { ...w, snapped: null, bounds: w.prevBounds, prevBounds: null }
+          : w,
+      ),
+    )
+  }, [])
+
   const setFolderPath = useCallback(
     (id: string, path: string[]) => {
       setWindows((ws) =>
@@ -340,6 +387,8 @@ export function WindowManagerProvider({
     toggleMaximize,
     focusWindow,
     moveWindow,
+    snapWindow,
+    unsnapWindow,
     setFolderPath,
     finderView,
     setFinderView,
