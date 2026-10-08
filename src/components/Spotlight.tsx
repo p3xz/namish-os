@@ -385,7 +385,7 @@ export default function Spotlight() {
   return (
     <AnimatePresence>
       {open && (
-        <div className="fixed inset-0 z-[400]">
+        <div className="fixed inset-0 z-[400]" data-spotlight-overlay>
           <motion.div
             className="absolute inset-0 bg-black/25"
             initial={{ opacity: 0 }}

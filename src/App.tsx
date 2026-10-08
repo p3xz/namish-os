@@ -6,6 +6,7 @@ import { resolveHash, findEntryAt } from './os/deeplinks'
 import BootScreen from './components/BootScreen'
 import LockScreen from './components/LockScreen'
 import Desktop from './components/Desktop'
+import GlobalShortcuts from './components/GlobalShortcuts'
 import NLogo from './components/NLogo'
 
 type Phase = 'boot' | 'desktop' | 'lock' | 'sleep' | 'shutdown'
@@ -25,6 +26,8 @@ export default function App() {
       <AppearanceProvider>
         <h1 className="sr-only">NamishOS, the portfolio of Namish Yadav</h1>
         <DeepLinkHandler />
+        {/* Global shortcuts only run on the unlocked desktop. */}
+        {phase === 'desktop' && <GlobalShortcuts />}
         <AnimatePresence>
           {phase === 'boot' && <BootScreen key="boot" onDone={() => setPhase('desktop')} />}
         </AnimatePresence>
