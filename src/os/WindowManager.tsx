@@ -7,7 +7,7 @@ import {
   useState,
   type ReactNode,
 } from 'react'
-import type { AppId, Bounds, FinderView, OpenAppOptions, OSWindow } from './types'
+import type { AppId, Bounds, FinderView, OpenAppOptions, OSWindow, QuickLookPayload } from './types'
 
 export type PowerAction = 'sleep' | 'lock' | 'restart' | 'shutdown'
 
@@ -76,6 +76,8 @@ interface WindowManagerCtx {
   /** Restore a snapped window to its pre-snap bounds. */
   unsnapWindow: (id: string) => void
   setFolderPath: (id: string, path: string[]) => void
+  /** Swap a Quick Look window to a different preview item (slideshow navigation). */
+  setQuickLook: (id: string, item: QuickLookPayload) => void
   finderView: FinderView
   setFinderView: (v: FinderView) => void
   activeApp: AppId
@@ -368,6 +370,17 @@ export function WindowManagerProvider({
     [],
   )
 
+  /** Swap the item a Quick Look window shows, updating its title bar too. */
+  const setQuickLook = useCallback((id: string, item: QuickLookPayload) => {
+    setWindows((ws) =>
+      ws.map((w) =>
+        w.id === id
+          ? { ...w, quickLook: item, title: titleFor('quicklook', { quickLook: item }) }
+          : w,
+      ),
+    )
+  }, [])
+
   const topWindow = useMemo(() => {
     const visible = windows.filter((w) => !w.minimized)
     if (visible.length === 0) return null
@@ -390,6 +403,7 @@ export function WindowManagerProvider({
     snapWindow,
     unsnapWindow,
     setFolderPath,
+    setQuickLook,
     finderView,
     setFinderView,
     activeApp,

@@ -15,12 +15,12 @@ import {
   X,
 } from 'lucide-react'
 import { useWindows } from '@/os/WindowManager'
-import { getFolderAt, homeFolder, textDocs, trashFolder, type FSEntry, type FSFolder } from '@/os/filesystem'
+import { getFolderAt, homeFolder, textDocs, trashFolder, type FSEntry, type FSFile, type FSFolder } from '@/os/filesystem'
+import type { OSWindow, QuickLookItem } from '@/os/types'
 import { deepLinkFor } from '@/os/deeplinks'
 import { profile, projects } from '@/data/portfolio'
 import MacFolder from './MacFolder'
 import { useContextMenu, type MenuEntry } from './ContextMenu'
-import type { OSWindow } from '@/os/types'
 
 /** Original document icon artwork, tinted by file kind. */
 function FileIcon({ entry, size = 44 }: { entry: FSEntry; size?: number }) {
@@ -306,8 +306,13 @@ export default function FinderWindow({ win }: { win: OSWindow }) {
 
   const openQuickLook = (entry: FSEntry) => {
     if (entry.type === 'folder') return
+    // Slideshow: arrow keys in the preview walk through every file in this
+    // folder, so the preview never has to close to see the next item.
+    const siblings: QuickLookItem[] = folder.children
+      .filter((c): c is FSFile => c.type === 'file')
+      .map((f) => ({ kind: f.kind, ref: f.ref, title: f.name }))
     openApp('quicklook', {
-      quickLook: { kind: entry.kind, ref: entry.ref, title: entry.name },
+      quickLook: { kind: entry.kind, ref: entry.ref, title: entry.name, siblings },
     })
   }
 

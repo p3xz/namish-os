@@ -30,7 +30,7 @@ export interface OSWindow {
   /** Finder folder path, e.g. ['Projects']. Empty = home. */
   folderPath?: string[]
   /** Quick Look payload */
-  quickLook?: { kind: 'text' | 'project' | 'image' | 'contact'; ref: string; title: string }
+  quickLook?: QuickLookPayload
   /** Genie minimize/restore animation currently in flight. The window hides instantly while the overlay animates the slices. */
   genieAnim?: 'out' | 'in' | null
   /** macOS-style edge snap state. Snapped windows remember their previous
@@ -41,6 +41,18 @@ export interface OSWindow {
 }
 
 export type FinderView = 'icons' | 'list' | 'gallery'
+
+/** One previewable item in a Quick Look slideshow. */
+export interface QuickLookItem {
+  kind: 'text' | 'project' | 'image' | 'contact'
+  ref: string
+  title: string
+}
+
+/** Quick Look payload: the shown item, plus the sibling items the arrow keys walk through. */
+export interface QuickLookPayload extends QuickLookItem {
+  siblings?: QuickLookItem[]
+}
 
 export interface OpenAppOptions {
   folderPath?: string[]

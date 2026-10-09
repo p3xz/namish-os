@@ -1,6 +1,8 @@
-import { ExternalLink, FileCode2, Github } from 'lucide-react'
+import { useCallback, useEffect, useRef } from 'react'
+import { ChevronLeft, ChevronRight, ExternalLink, FileCode2, Github } from 'lucide-react'
 import { textDocs } from '@/os/filesystem'
 import { profile, projects } from '@/data/portfolio'
+import { useWindows } from '@/os/WindowManager'
 import type { OSWindow } from '@/os/types'
 
 function Autolink({ text }: { text: string }) {
@@ -185,11 +187,47 @@ function ContactPreview() {
 }
 
 export default function QuickLook({ win }: { win: OSWindow }) {
+  const { setQuickLook, topWindow } = useWindows()
   const ql = win.quickLook
+  const scrollRef = useRef<HTMLDivElement>(null)
+
+  const siblings = ql?.siblings ?? []
+  const index = ql ? siblings.findIndex((s) => s.kind === ql.kind && s.ref === ql.ref) : -1
+  const canSlide = siblings.length > 1 && index !== -1
+
+  const go = useCallback(
+    (dir: 1 | -1) => {
+      if (!ql || !canSlide) return
+      const next = siblings[(index + dir + siblings.length) % siblings.length]
+      // Keep the sibling list on the payload so navigation keeps working.
+      setQuickLook(win.id, { ...next, siblings })
+    },
+    [ql, canSlide, siblings, index, setQuickLook, win.id],
+  )
+
+  // Back to the top whenever the previewed item changes.
+  useEffect(() => {
+    scrollRef.current?.scrollTo(0, 0)
+  }, [ql?.kind, ql?.ref])
+
+  // Arrow keys walk the slideshow while this preview is frontmost, macOS-style.
+  // Up/down are left alone so long text and project docs still scroll.
+  useEffect(() => {
+    if (!canSlide || topWindow?.id !== win.id) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.metaKey || e.ctrlKey || e.altKey) return
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return
+      e.preventDefault()
+      go(e.key === 'ArrowRight' ? 1 : -1)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [canSlide, topWindow?.id, win.id, go])
+
   if (!ql) return null
 
   return (
-    <div className="min-h-0 flex-1 overflow-y-auto bg-white">
+    <div ref={scrollRef} className="group relative min-h-0 flex-1 overflow-y-auto bg-white">
       {ql.kind === 'text' && <TextPreview docKey={ql.ref} />}
       {ql.kind === 'project' && <ProjectPreview id={ql.ref} />}
       {ql.kind === 'image' && (
@@ -202,6 +240,28 @@ export default function QuickLook({ win }: { win: OSWindow }) {
         </div>
       )}
       {ql.kind === 'contact' && <ContactPreview />}
+
+      {canSlide && (
+        <>
+          <button
+            onClick={() => go(-1)}
+            aria-label="Previous item"
+            className="absolute left-3 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/45 p-2 text-white opacity-0 shadow-lg backdrop-blur transition-opacity hover:bg-black/65 focus-visible:opacity-100 group-hover:opacity-100"
+          >
+            <ChevronLeft size={22} />
+          </button>
+          <button
+            onClick={() => go(1)}
+            aria-label="Next item"
+            className="absolute right-3 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/45 p-2 text-white opacity-0 shadow-lg backdrop-blur transition-opacity hover:bg-black/65 focus-visible:opacity-100 group-hover:opacity-100"
+          >
+            <ChevronRight size={22} />
+          </button>
+          <div className="pointer-events-none absolute bottom-3 left-1/2 z-10 -translate-x-1/2 rounded-full bg-black/45 px-3 py-1 text-[12px] font-medium text-white opacity-0 backdrop-blur transition-opacity group-hover:opacity-100">
+            {index + 1} of {siblings.length}
+          </div>
+        </>
+      )}
     </div>
   )
 }
