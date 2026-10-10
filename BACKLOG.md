@@ -24,7 +24,7 @@ One item ships per daily commit. Every item below is a genuine, noticeable featu
 
 ## Customization and system
 
-- [ ] System themes: light, dark, and accent-color themes for the menu bar, windows, and Dock, switchable from Settings
+- [x] System themes: light, dark, and accent-color themes for the menu bar, windows, and Dock, switchable from Settings
 - [ ] Custom wallpaper upload: use your own image as the desktop background, persisted in localStorage
 - [ ] Battery popover: the menu bar battery icon shows the real charge level via the Battery API when available
 - [ ] Sound effects: subtle clicks on window open/close and a boot chime, with a mute toggle in Settings

@@ -153,7 +153,7 @@ function WindowTile({
         <span className="text-[12px] font-medium text-neutral-500">{glyph.label}</span>
       </div>
       {/* Hover ring */}
-      <div className="pointer-events-none absolute inset-0 rounded-[10px] ring-2 ring-inset ring-transparent transition group-hover:ring-[#0a84ff]" />
+      <div className="pointer-events-none absolute inset-0 rounded-[10px] ring-2 ring-inset ring-transparent transition group-hover:ring-(--accent)" />
     </motion.div>
   )
 }

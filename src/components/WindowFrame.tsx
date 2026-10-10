@@ -3,6 +3,7 @@ import { Minus, Plus, X } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { useState } from 'react'
 import { useWindows, type SnapEdge } from '@/os/WindowManager'
+import { useAppearance } from '@/os/Appearance'
 import type { OSWindow } from '@/os/types'
 
 /** Pixel distance from a screen edge that counts as a snap zone while dragging. */
@@ -118,7 +119,10 @@ export default function WindowFrame({
   }
 
   const minimizeY = typeof window === 'undefined' ? 600 : window.innerHeight - win.bounds.y
-  const dark = tone === 'dark'
+  const { systemTheme } = useAppearance()
+  // Apps with a dark tone (Terminal) keep dark chrome even when the system
+  // is in light mode; everything else follows the system theme.
+  const dark = tone === 'dark' || systemTheme === 'dark'
   // While a genie animation is in flight the window hides instantly; the
   // GenieOverlay animates slices of a live clone instead.
   const genieRunning = win.genieAnim != null
@@ -130,8 +134,15 @@ export default function WindowFrame({
       {preview && (
         <div
           aria-hidden
-          className="pointer-events-none fixed z-[5] rounded-xl border-2 border-sky-400/70 bg-sky-400/20 transition-all duration-150 ease-out"
-          style={{ left: preview.x, top: preview.y, width: preview.w, height: preview.h }}
+          className="pointer-events-none fixed z-[5] rounded-xl border-2 transition-all duration-150 ease-out"
+          style={{
+            left: preview.x,
+            top: preview.y,
+            width: preview.w,
+            height: preview.h,
+            borderColor: 'var(--accent)',
+            backgroundColor: 'color-mix(in srgb, var(--accent) 18%, transparent)',
+          }}
         />
       )}
       <motion.div
@@ -177,18 +188,14 @@ export default function WindowFrame({
         transformOrigin: '50% 100%',
         pointerEvents: win.minimized || genieRunning ? 'none' : 'auto',
       }}
-      className={`absolute left-0 top-0 flex flex-col overflow-hidden rounded-xl border backdrop-blur-2xl ${
-        dark
-          ? 'border-white/15 bg-[#232328]/90 shadow-[0_24px_80px_rgba(0,0,0,0.55)]'
-          : 'border-black/15 bg-[#f2f2f4]/90 shadow-[0_24px_80px_rgba(0,0,0,0.35)]'
+      className={`chrome-window absolute left-0 top-0 flex flex-col overflow-hidden rounded-xl border backdrop-blur-2xl ${
+        dark ? 'win-tone-dark' : ''
       }`}
       onPointerDown={() => focusWindow(win.id)}
     >
       {/* Title bar */}
       <div
-        className={`relative flex h-11 shrink-0 touch-none items-center border-b ${
-          dark ? 'border-white/10 bg-white/[0.06]' : 'border-black/10 bg-white/40'
-        }`}
+        className="chrome-titlebar relative flex h-11 shrink-0 touch-none items-center"
         onPointerDown={onTitlePointerDown}
         onDoubleClick={() => toggleMaximize(win.id)}
       >
@@ -204,13 +211,7 @@ export default function WindowFrame({
           </TrafficButton>
         </div>
         <div className="pointer-events-none mx-auto flex max-w-[60%] items-center gap-2">
-          <span
-            className={`truncate text-[13px] font-semibold ${
-              dark ? 'text-white/90' : 'text-neutral-800'
-            }`}
-          >
-            {win.title}
-          </span>
+          <span className="chrome-title truncate text-[13px] font-semibold">{win.title}</span>
         </div>
       </div>
 

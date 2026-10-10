@@ -76,13 +76,13 @@ function MenuPanel({ x, y, items, onPick }: PanelProps) {
       ref={ref}
       data-context-menu
       role="menu"
-      className="fixed z-[500] min-w-[224px] max-w-[300px] rounded-xl border border-black/10 bg-white/80 p-1 shadow-[0_16px_48px_rgba(0,0,0,0.28)] backdrop-blur-2xl"
+      className="chrome-dropdown fixed z-[500] min-w-[224px] max-w-[300px] p-1 shadow-[0_16px_48px_rgba(0,0,0,0.28)]"
       style={{ left: pos.left, top: pos.top }}
       onMouseLeave={() => setOpenSub(null)}
     >
       {items.map((entry, i) => {
         if (entry.type === 'separator') {
-          return <div key={i} className="mx-2 my-1 border-t border-black/10" role="separator" />
+          return <div key={i} className="chrome-sep mx-2 my-1 h-px" role="separator" />
         }
         if (entry.type === 'submenu') {
           return (
@@ -96,7 +96,7 @@ function MenuPanel({ x, y, items, onPick }: PanelProps) {
               aria-haspopup="menu"
               onMouseEnter={() => openSubmenu(i)}
               onClick={() => openSubmenu(i)}
-              className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-[7px] text-left text-[13px] text-neutral-800 transition-colors hover:bg-[#0a84ff] hover:text-white"
+              className="chrome-dropdown-item flex w-full items-center gap-2.5 rounded-lg px-2.5 py-[7px] text-left text-[13px] transition-colors"
             >
               <span className="flex w-[18px] shrink-0 items-center justify-center">
                 {entry.icon}
@@ -119,8 +119,8 @@ function MenuPanel({ x, y, items, onPick }: PanelProps) {
             }}
             className={`flex w-full items-center gap-2.5 rounded-lg px-2.5 py-[7px] text-left text-[13px] transition-colors ${
               entry.disabled
-                ? 'cursor-default text-neutral-400'
-                : 'text-neutral-800 hover:bg-[#0a84ff] hover:text-white'
+                ? 'cursor-default text-(--chrome-fg-faint)'
+                : 'chrome-dropdown-item'
             }`}
           >
             <span className="flex w-[18px] shrink-0 items-center justify-center">

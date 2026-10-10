@@ -171,6 +171,161 @@ body {
 /* Visible keyboard focus, macOS style: a blue focus ring so keyboard
    users can always see the focused window control, icon, or input. */
 :focus-visible {
-  outline: 2px solid #0a84ff;
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
+}
+
+/* ---------- System themes & accent colors ----------
+   `data-system-theme` (light/dark) and `data-accent` are set on
+   <html> by the Appearance provider. The menu bar, window chrome,
+   and Dock read these variables so themes switch instantly. */
+
+:root {
+  --accent: #0a84ff;
+  --accent-contrast: #ffffff;
+
+  --chrome-fg: #232327;
+  --chrome-fg-soft: #55555c;
+  --chrome-fg-faint: #9b9ba1;
+
+  --menubar-bg: rgba(250, 250, 252, 0.62);
+  --menubar-border: rgba(0, 0, 0, 0.08);
+  --menubar-hover: rgba(0, 0, 0, 0.06);
+  --menubar-active: rgba(0, 0, 0, 0.1);
+
+  --win-bg: rgba(242, 242, 244, 0.9);
+  --win-border: rgba(0, 0, 0, 0.15);
+  --win-titlebar-bg: rgba(255, 255, 255, 0.4);
+  --win-titlebar-border: rgba(0, 0, 0, 0.1);
+  --win-title-fg: #2b2b2e;
+  --win-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+
+  --dock-bg: rgba(255, 255, 255, 0.5);
+  --dock-border: rgba(255, 255, 255, 0.55);
+  --dock-dot: rgba(0, 0, 0, 0.55);
+
+  --panel-bg: rgba(246, 246, 248, 0.86);
+  --panel-border: rgba(0, 0, 0, 0.12);
+  --panel-sep: rgba(0, 0, 0, 0.1);
+}
+
+[data-system-theme='dark'] {
+  --chrome-fg: #f4f4f6;
+  --chrome-fg-soft: #c7c7cd;
+  --chrome-fg-faint: #8e8e96;
+
+  --menubar-bg: rgba(30, 30, 34, 0.62);
+  --menubar-border: rgba(255, 255, 255, 0.12);
+  --menubar-hover: rgba(255, 255, 255, 0.1);
+  --menubar-active: rgba(255, 255, 255, 0.16);
+
+  --win-bg: rgba(35, 35, 40, 0.9);
+  --win-border: rgba(255, 255, 255, 0.15);
+  --win-titlebar-bg: rgba(255, 255, 255, 0.06);
+  --win-titlebar-border: rgba(255, 255, 255, 0.1);
+  --win-title-fg: rgba(255, 255, 255, 0.9);
+  --win-shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
+
+  --dock-bg: rgba(28, 28, 32, 0.5);
+  --dock-border: rgba(255, 255, 255, 0.22);
+  --dock-dot: rgba(255, 255, 255, 0.75);
+
+  --panel-bg: rgba(40, 40, 45, 0.86);
+  --panel-border: rgba(255, 255, 255, 0.14);
+  --panel-sep: rgba(255, 255, 255, 0.12);
+}
+
+[data-accent='green'] { --accent: #30d158; }
+[data-accent='orange'] { --accent: #ff9f0a; }
+[data-accent='purple'] { --accent: #bf5af2; }
+[data-accent='pink'] { --accent: #ff375f; }
+
+/* Window chrome */
+.chrome-window {
+  background: var(--win-bg);
+  border-color: var(--win-border);
+  box-shadow: var(--win-shadow);
+}
+.chrome-titlebar {
+  background: var(--win-titlebar-bg);
+  border-bottom: 1px solid var(--win-titlebar-border);
+}
+.chrome-title {
+  color: var(--win-title-fg);
+}
+/* Forced-dark chrome for apps that are always dark (Terminal), even in
+   light system theme. In dark system theme these values already apply. */
+.win-tone-dark {
+  --win-bg: rgba(35, 35, 40, 0.9);
+  --win-border: rgba(255, 255, 255, 0.15);
+  --win-titlebar-bg: rgba(255, 255, 255, 0.06);
+  --win-titlebar-border: rgba(255, 255, 255, 0.1);
+  --win-title-fg: rgba(255, 255, 255, 0.9);
+  --win-shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
+}
+
+/* Menu bar chrome */
+.menubar-surface {
+  background: var(--menubar-bg);
+  border-bottom: 1px solid var(--menubar-border);
+}
+.menubar-menu {
+  color: var(--chrome-fg-soft);
+  border-radius: 4px;
+}
+.menubar-menu:hover {
+  background: var(--menubar-hover);
+}
+.menubar-menu.open {
+  background: var(--menubar-active);
+  color: var(--chrome-fg);
+}
+.menubar-btn {
+  color: var(--chrome-fg-soft);
+  border-radius: 6px;
+}
+.menubar-btn:hover {
+  background: var(--menubar-hover);
+  color: var(--chrome-fg);
+}
+
+/* Dropdowns and popovers (menu bar menus, calendar, battery, wifi) */
+.chrome-dropdown {
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.25),
+    0 2px 8px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(24px) saturate(1.4);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+}
+.chrome-dropdown-item {
+  color: var(--chrome-fg);
+}
+.chrome-dropdown-item:hover {
+  background: var(--accent);
+  color: var(--accent-contrast);
+}
+.dd-icon {
+  color: var(--chrome-fg-faint);
+}
+.chrome-dropdown-item:hover .dd-icon {
+  color: var(--accent-contrast);
+}
+.dd-shortcut {
+  color: var(--chrome-fg-faint);
+}
+.chrome-dropdown-item:hover .dd-shortcut {
+  color: var(--accent-contrast);
+  opacity: 0.8;
+}
+.chrome-sep {
+  background: var(--panel-sep);
+}
+.chrome-popover {
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  color: var(--chrome-fg);
 }

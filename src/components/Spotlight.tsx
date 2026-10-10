@@ -444,7 +444,7 @@ export default function Spotlight() {
                           onClick={() => runItem(item)}
                           onMouseMove={() => setActive(idx)}
                           className={`flex w-full items-center gap-3 px-5 py-2 text-left transition-colors ${
-                            isActive ? 'bg-[#0a84ff]' : 'bg-transparent'
+                            isActive ? 'bg-(--accent)' : 'bg-transparent'
                           }`}
                         >
                           <span
