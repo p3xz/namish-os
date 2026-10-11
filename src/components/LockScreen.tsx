@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { useAppearance } from '@/os/Appearance'
-import { WALLPAPER_IMAGES } from './Wallpaper'
+import { resolveWallpaperSrc } from './Wallpaper'
 import NLogo from './NLogo'
 
 function useNow() {
@@ -14,7 +14,7 @@ function useNow() {
 }
 
 export default function LockScreen({ onUnlock }: { onUnlock: () => void }) {
-  const { variant } = useAppearance()
+  const { variant, customWallpaper } = useAppearance()
   const now = useNow()
 
   useEffect(() => {
@@ -45,7 +45,7 @@ export default function LockScreen({ onUnlock }: { onUnlock: () => void }) {
     >
       {/* Blurred wallpaper, distinct from the black sleep screen */}
       <img
-        src={WALLPAPER_IMAGES[variant]}
+        src={resolveWallpaperSrc(variant, customWallpaper)}
         alt=""
         draggable={false}
         className="absolute inset-0 h-full w-full scale-110 object-cover blur-2xl brightness-[0.55]"

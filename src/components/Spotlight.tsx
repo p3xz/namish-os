@@ -85,6 +85,7 @@ const WALLPAPERS: { id: string; name: string }[] = [
   { id: 'tide', name: 'Tide' },
   { id: 'drift', name: 'Drift' },
   { id: 'ember', name: 'Ember' },
+  { id: 'custom', name: 'Custom photo' },
 ]
 
 function collectFolders(node: FSFolder, path: string[], out: SpotItem[]) {

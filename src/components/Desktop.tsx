@@ -18,7 +18,7 @@ const WALLPAPERS: WallpaperVariant[] = ['tide', 'drift', 'ember']
 
 export default function Desktop() {
   const { openApp } = useWindows()
-  const { variant, setVariant } = useAppearance()
+  const { variant, setVariant, customWallpaper, uploadCustomWallpaper } = useAppearance()
   const { showContextMenu, contextMenu } = useContextMenu()
 
   const onDesktopMenu = (e: React.MouseEvent) => {
@@ -32,17 +32,36 @@ export default function Desktop() {
     ) {
       return
     }
+    const wallpaperItems = [
+      ...WALLPAPERS.map((w) => ({
+        type: 'item' as const,
+        label: WALLPAPER_META[w].name,
+        checked: variant === w,
+        onSelect: () => setVariant(w),
+      })),
+    ]
+    if (customWallpaper) {
+      wallpaperItems.push({
+        type: 'item' as const,
+        label: WALLPAPER_META.custom.name,
+        checked: variant === 'custom',
+        onSelect: () => setVariant('custom'),
+      })
+    }
+    wallpaperItems.push({
+      type: 'item' as const,
+      label: 'Upload your own photo',
+      checked: false,
+      onSelect: () => {
+        void uploadCustomWallpaper()
+      },
+    })
     const items: MenuEntry[] = [
       {
         type: 'submenu',
         label: 'Change Wallpaper',
         icon: <ImageIcon size={15} strokeWidth={2} />,
-        items: WALLPAPERS.map((w) => ({
-          type: 'item' as const,
-          label: WALLPAPER_META[w].name,
-          checked: variant === w,
-          onSelect: () => setVariant(w),
-        })),
+        items: wallpaperItems,
       },
       { type: 'separator' },
       {

@@ -1,8 +1,9 @@
-import { Check } from 'lucide-react'
+import { useState } from 'react'
+import { Check, ImagePlus, Loader2, Trash2 } from 'lucide-react'
 import { useAppearance, type AccentColor, type SystemTheme, type TerminalTheme, type WallpaperVariant } from '@/os/Appearance'
 import { WALLPAPER_IMAGES, WALLPAPER_META } from './Wallpaper'
 
-const VARIANTS: WallpaperVariant[] = ['tide', 'drift', 'ember']
+const VARIANTS: Exclude<WallpaperVariant, 'custom'>[] = ['tide', 'drift', 'ember']
 
 const SYSTEM_THEMES: { id: SystemTheme; name: string; blurb: string }[] = [
   { id: 'light', name: 'Light', blurb: 'Bright chrome for the menu bar, windows, and Dock.' },
@@ -69,7 +70,29 @@ function ThemePreview({ bg, fg, accent }: { bg: string; fg: string; accent: stri
 }
 
 export default function SettingsWindow() {
-  const { variant, setVariant, terminalTheme, setTerminalTheme, systemTheme, setSystemTheme, accentColor, setAccentColor } = useAppearance()
+  const {
+    variant,
+    setVariant,
+    customWallpaper,
+    uploadCustomWallpaper,
+    clearCustomWallpaper,
+    terminalTheme,
+    setTerminalTheme,
+    systemTheme,
+    setSystemTheme,
+    accentColor,
+    setAccentColor,
+  } = useAppearance()
+  const [uploading, setUploading] = useState(false)
+  const [uploadError, setUploadError] = useState<string | null>(null)
+
+  const handleUpload = async () => {
+    setUploading(true)
+    setUploadError(null)
+    const result = await uploadCustomWallpaper()
+    setUploading(false)
+    if (!result.ok && result.message) setUploadError(result.message)
+  }
 
   return (
     <div className="min-h-0 flex-1 overflow-y-auto bg-white p-5">
@@ -108,6 +131,73 @@ export default function SettingsWindow() {
             </button>
           )
         })}
+      </div>
+
+      {/* Custom wallpaper upload */}
+      <div
+        className={`mt-2 flex w-full items-center gap-4 rounded-2xl border p-3 text-left transition-all ${
+          variant === 'custom'
+            ? 'border-sky-500/60 bg-sky-50'
+            : 'border-black/10 bg-black/[0.02] hover:bg-black/[0.05]'
+        }`}
+      >
+        {customWallpaper ? (
+          <button
+            onClick={() => setVariant('custom')}
+            aria-label="Use your photo as the wallpaper"
+            className="shrink-0"
+          >
+            <img
+              src={customWallpaper}
+              alt="Your uploaded wallpaper"
+              draggable={false}
+              className="h-12 w-20 rounded-xl border border-black/10 object-cover shadow-inner"
+            />
+          </button>
+        ) : (
+          <button
+            onClick={handleUpload}
+            disabled={uploading}
+            aria-label="Upload your own wallpaper"
+            className="flex h-12 w-20 shrink-0 items-center justify-center rounded-xl border border-dashed border-neutral-400 bg-white text-neutral-500 transition-colors hover:border-sky-500 hover:text-sky-600 disabled:opacity-60"
+          >
+            {uploading ? <Loader2 size={18} className="animate-spin" /> : <ImagePlus size={18} />}
+          </button>
+        )}
+        <div className="min-w-0 flex-1">
+          <div className="text-[14px] font-semibold text-neutral-900">Your Photo</div>
+          <div className="truncate text-[12px] text-neutral-500">
+            {customWallpaper
+              ? 'Saved in this browser. Tap the thumbnail to switch back to it.'
+              : 'Upload one of your own images as the desktop background.'}
+          </div>
+          {uploadError && <div className="mt-0.5 text-[12px] text-red-500">{uploadError}</div>}
+        </div>
+        {customWallpaper && !uploading && (
+          <button
+            onClick={handleUpload}
+            title="Replace your photo"
+            aria-label="Replace your photo"
+            className="flex size-9 shrink-0 items-center justify-center rounded-full text-neutral-500 transition-colors hover:bg-black/[0.06] hover:text-neutral-800"
+          >
+            <ImagePlus size={16} />
+          </button>
+        )}
+        {customWallpaper && !uploading && (
+          <button
+            onClick={clearCustomWallpaper}
+            title="Remove your photo"
+            aria-label="Remove your photo"
+            className="flex size-9 shrink-0 items-center justify-center rounded-full text-neutral-500 transition-colors hover:bg-red-50 hover:text-red-600"
+          >
+            <Trash2 size={16} />
+          </button>
+        )}
+        {variant === 'custom' && (
+          <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-sky-500">
+            <Check size={14} className="text-white" strokeWidth={3} />
+          </span>
+        )}
       </div>
 
       <h2 className="mt-8 text-[15px] font-semibold text-neutral-900">Appearance mode</h2>
