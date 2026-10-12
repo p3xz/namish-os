@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect, useRef, useCallback, type ReactNode } from 'react'
-import { BatteryMedium, Wifi, ChevronLeft, ChevronRight, Check, Search, LayoutGrid } from 'lucide-react'
+import { BatteryCharging, BatteryFull, BatteryLow, BatteryMedium, Wifi, ChevronLeft, ChevronRight, Check, Search, LayoutGrid } from 'lucide-react'
 import NLogo from '@/components/NLogo'
 
 // Types
@@ -251,47 +251,138 @@ function CalendarPopover() {
   )
 }
 
-// --- Battery popover (prototype) --------------------------------------------
+// --- Battery status (real device data) ----------------------------------------
 
-function BatteryPopover() {
-  const [level, setLevel] = useState<number | null>(null)
+interface BatteryManagerLike extends EventTarget {
+  level: number
+  charging: boolean
+  chargingTime: number
+  dischargingTime: number
+}
+
+interface BatteryStatus {
+  supported: boolean
+  level: number
+  charging: boolean
+  chargingTime: number
+  dischargingTime: number
+}
+
+const UNKNOWN_BATTERY: BatteryStatus = {
+  supported: false,
+  level: 100,
+  charging: false,
+  chargingTime: Number.POSITIVE_INFINITY,
+  dischargingTime: Number.POSITIVE_INFINITY,
+}
+
+/** Live battery readout via the Battery Status API. Falls back cleanly where unsupported. */
+function useBatteryStatus(): BatteryStatus {
+  const [status, setStatus] = useState<BatteryStatus>(UNKNOWN_BATTERY)
 
   useEffect(() => {
     let alive = true
-    try {
-      const nav = navigator as unknown as { getBattery?: () => Promise<{ level: number }> }
-      if (nav.getBattery) {
-        nav.getBattery()
-          .then((b) => {
-            if (alive) setLevel(Math.round(b.level * 100))
-          })
-          .catch(() => {})
-      }
-    } catch {
-      /* prototype fallback below */
+    let manager: BatteryManagerLike | null = null
+    const nav = navigator as unknown as {
+      getBattery?: () => Promise<BatteryManagerLike>
     }
+    if (typeof nav.getBattery !== 'function') return
+
+    const sync = () => {
+      if (!alive || !manager) return
+      setStatus({
+        supported: true,
+        level: Math.round(manager.level * 100),
+        charging: manager.charging,
+        chargingTime: manager.chargingTime,
+        dischargingTime: manager.dischargingTime,
+      })
+    }
+
+    nav
+      .getBattery()
+      .then((b) => {
+        if (!alive) return
+        manager = b
+        sync()
+        b.addEventListener('levelchange', sync)
+        b.addEventListener('chargingchange', sync)
+        b.addEventListener('chargingtimechange', sync)
+        b.addEventListener('dischargingtimechange', sync)
+      })
+      .catch(() => {
+        /* keep the unsupported fallback */
+      })
+
     return () => {
       alive = false
+      if (manager) {
+        manager.removeEventListener('levelchange', sync)
+        manager.removeEventListener('chargingchange', sync)
+        manager.removeEventListener('chargingtimechange', sync)
+        manager.removeEventListener('dischargingtimechange', sync)
+      }
     }
   }, [])
 
-  const pct = level ?? 87
+  return status
+}
+
+/** Format a battery time (seconds) as h:mm, or null when the browser reports infinity. */
+function formatBatteryTime(seconds: number): string | null {
+  if (!Number.isFinite(seconds) || seconds < 0) return null
+  const h = Math.floor(seconds / 3600)
+  const m = Math.floor((seconds % 3600) / 60)
+  return `${h}:${String(m).padStart(2, '0')}`
+}
+
+// --- Battery popover --------------------------------------------------------
+
+function BatteryPopover({ status }: { status: BatteryStatus }) {
+  const barColor =
+    status.level <= 20 ? 'bg-red-500' : status.level <= 50 ? 'bg-amber-400' : 'bg-emerald-500'
+
+  let detail: string | null = null
+  if (status.supported) {
+    if (status.charging && status.level >= 100) {
+      detail = 'Fully charged'
+    } else if (status.charging) {
+      const eta = formatBatteryTime(status.chargingTime)
+      detail = eta ? `Charging, full in ${eta}` : 'Charging'
+    } else {
+      const remaining = formatBatteryTime(status.dischargingTime)
+      detail = remaining ? `${remaining} remaining` : 'Not charging'
+    }
+  }
 
   return (
     <div className={`${POPOVER_CARD} right-2 p-4`}>
       <div className="text-[13px] font-semibold">Battery</div>
-      <div className="mt-3 flex items-center gap-3">
-        <span className="text-[28px] font-semibold">{pct}%</span>
-        <div className="relative h-6 w-14 rounded-[6px] border-2 border-neutral-400">
-          <div
-            className="absolute inset-[2px] rounded-[3px] bg-emerald-500"
-            style={{ width: `calc(${pct}% - 4px)` }}
-          />
-          <div className="absolute -right-[7px] top-1/2 h-3 w-[4px] -translate-y-1/2 rounded-r bg-neutral-400" />
+      {status.supported ? (
+        <>
+          <div className="mt-3 flex items-center gap-3">
+            <span className="text-[28px] font-semibold">{status.level}%</span>
+            <div
+              className="relative h-6 w-14 rounded-[6px] border-2 border-neutral-400"
+              aria-hidden
+            >
+              <div
+                className={`absolute inset-[2px] rounded-[3px] ${barColor}`}
+                style={{ width: `calc(${status.level}% - 4px)` }}
+              />
+              <div className="absolute -right-[7px] top-1/2 h-3 w-[4px] -translate-y-1/2 rounded-r bg-neutral-400" />
+            </div>
+          </div>
+          <div className="mt-2 text-[12.5px] text-(--chrome-fg-soft)">
+            Power Source: {status.charging ? 'Power Adapter' : 'Battery'}
+          </div>
+          {detail && <div className="mt-1 text-[11px] text-(--chrome-fg-faint)">{detail}</div>}
+        </>
+      ) : (
+        <div className="mt-2 text-[12.5px] text-(--chrome-fg-soft)">
+          Battery status is not available on this device or browser.
         </div>
-      </div>
-      <div className="mt-2 text-[12.5px] text-(--chrome-fg-soft)">Power Source: Power Adapter</div>
-      <div className="mt-1 text-[11px] text-(--chrome-fg-faint)">Prototype: mock status for now</div>
+      )}
     </div>
   )
 }
@@ -379,6 +470,17 @@ const MacOSMenuBar: React.FC<MacOSMenuBarProps> = ({
   const [activeMenu, setActiveMenu] = useState<string | null>(null)
   const [dropdownPosition, setDropdownPosition] = useState({ x: 0, y: 0 })
   const [activePopover, setActivePopover] = useState<'battery' | 'wifi' | 'calendar' | null>(null)
+  const battery = useBatteryStatus()
+
+  const BatteryStatusIcon = !battery.supported
+    ? BatteryMedium
+    : battery.charging
+      ? BatteryCharging
+      : battery.level <= 20
+        ? BatteryLow
+        : battery.level < 75
+          ? BatteryMedium
+          : BatteryFull
 
   const nLogoRef = useRef<HTMLDivElement>(null)
   const menuRefs = useRef<{ [key: string]: HTMLSpanElement | null }>({})
@@ -527,7 +629,7 @@ const MacOSMenuBar: React.FC<MacOSMenuBarProps> = ({
               }
               title="Battery"
             >
-              <BatteryMedium size={22} strokeWidth={1.5} />
+              <BatteryStatusIcon size={22} strokeWidth={1.5} />
             </button>
             <button
               className="menubar-btn macos-popover-trigger rounded p-0.5 transition-colors"
@@ -552,7 +654,7 @@ const MacOSMenuBar: React.FC<MacOSMenuBarProps> = ({
       </div>
 
       {/* Status popovers */}
-      {activePopover === 'battery' && <BatteryPopover />}
+      {activePopover === 'battery' && <BatteryPopover status={battery} />}
       {activePopover === 'wifi' && <WifiPopover />}
       {activePopover === 'calendar' && <CalendarPopover />}
 
