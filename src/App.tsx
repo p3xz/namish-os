@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { WindowManagerProvider, type PowerAction, useWindows } from './os/WindowManager'
 import { AppearanceProvider } from './os/Appearance'
 import { resolveHash, findEntryAt } from './os/deeplinks'
+import { playBootChime } from './os/sound'
 import BootScreen from './components/BootScreen'
 import LockScreen from './components/LockScreen'
 import Desktop from './components/Desktop'
@@ -13,6 +14,13 @@ type Phase = 'boot' | 'desktop' | 'lock' | 'sleep' | 'shutdown'
 
 export default function App() {
   const [phase, setPhase] = useState<Phase>('boot')
+
+  const bootDone = useCallback(() => {
+    setPhase('desktop')
+    // The chime plays only after a user gesture unlocked audio; before that
+    // it stays silent, which is exactly how browsers want it.
+    playBootChime()
+  }, [])
 
   const powerAction = useCallback((a: PowerAction) => {
     if (a === 'sleep') setPhase('sleep')
@@ -29,7 +37,7 @@ export default function App() {
         {/* Global shortcuts only run on the unlocked desktop. */}
         {phase === 'desktop' && <GlobalShortcuts />}
         <AnimatePresence>
-          {phase === 'boot' && <BootScreen key="boot" onDone={() => setPhase('desktop')} />}
+          {phase === 'boot' && <BootScreen key="boot" onDone={bootDone} />}
         </AnimatePresence>
 
         {(phase === 'desktop' || phase === 'sleep' || phase === 'lock') && <Desktop />}

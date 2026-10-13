@@ -8,6 +8,7 @@ import {
   type ReactNode,
 } from 'react'
 import type { AppId, Bounds, FinderView, OpenAppOptions, OSWindow, QuickLookPayload } from './types'
+import { playWindowClose, playWindowOpen } from './sound'
 
 export type PowerAction = 'sleep' | 'lock' | 'restart' | 'shutdown'
 
@@ -302,12 +303,14 @@ export function WindowManagerProvider({
       setWindows((ws) => [...ws, win])
       const dockId = dockIdForLaunch(app, opts)
       if (dockId) setLastLaunch({ dockId, at: Date.now() })
+      playWindowOpen()
     },
     [windows, focusWindow],
   )
 
   const closeWindow = useCallback((id: string) => {
     setWindows((ws) => ws.filter((w) => w.id !== id))
+    playWindowClose()
   }, [])
 
   const toggleMaximize = useCallback((id: string) => {

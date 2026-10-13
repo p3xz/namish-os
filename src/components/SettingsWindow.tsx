@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { Check, ImagePlus, Loader2, Trash2 } from 'lucide-react'
+import { Check, ImagePlus, Loader2, Trash2, Volume2, VolumeX } from 'lucide-react'
 import { useAppearance, type AccentColor, type SystemTheme, type TerminalTheme, type WallpaperVariant } from '@/os/Appearance'
+import { playWindowOpen, useSoundMuted } from '@/os/sound'
 import { WALLPAPER_IMAGES, WALLPAPER_META } from './Wallpaper'
 
 const VARIANTS: Exclude<WallpaperVariant, 'custom'>[] = ['tide', 'drift', 'ember']
@@ -83,6 +84,7 @@ export default function SettingsWindow() {
     accentColor,
     setAccentColor,
   } = useAppearance()
+  const [soundMuted, setSoundMuted] = useSoundMuted()
   const [uploading, setUploading] = useState(false)
   const [uploadError, setUploadError] = useState<string | null>(null)
 
@@ -92,6 +94,13 @@ export default function SettingsWindow() {
     const result = await uploadCustomWallpaper()
     setUploading(false)
     if (!result.ok && result.message) setUploadError(result.message)
+  }
+
+  const toggleSound = () => {
+    const next = !soundMuted
+    setSoundMuted(next)
+    // Let the user hear what they just turned on.
+    if (!next) playWindowOpen()
   }
 
   return (
@@ -292,6 +301,46 @@ export default function SettingsWindow() {
           )
         })}
       </div>
+
+      <h2 className="mt-8 text-[15px] font-semibold text-neutral-900">Sound effects</h2>
+      <p className="mt-1 text-[12.5px] text-neutral-500">
+        Soft clicks when windows open and close, plus a chime when NamishOS boots.
+      </p>
+
+      <button
+        onClick={toggleSound}
+        aria-pressed={!soundMuted}
+        className={`mt-4 flex w-full items-center gap-4 rounded-2xl border p-3 text-left transition-all ${
+          !soundMuted
+            ? 'border-sky-500/60 bg-sky-50'
+            : 'border-black/10 bg-black/[0.02] hover:bg-black/[0.05]'
+        }`}
+      >
+        <span
+          className={`flex size-10 shrink-0 items-center justify-center rounded-xl ${
+            soundMuted ? 'bg-neutral-200 text-neutral-500' : 'bg-sky-500 text-white'
+          }`}
+        >
+          {soundMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+        </span>
+        <div className="min-w-0 flex-1">
+          <div className="text-[14px] font-semibold text-neutral-900">System sounds</div>
+          <div className="truncate text-[12px] text-neutral-500">
+            {soundMuted ? 'Off. NamishOS stays silent.' : 'On. Clicks and the boot chime play.'}
+          </div>
+        </div>
+        <span
+          className={`relative h-7 w-12 shrink-0 rounded-full transition-colors ${
+            soundMuted ? 'bg-neutral-300' : 'bg-sky-500'
+          }`}
+        >
+          <span
+            className={`absolute top-1 size-5 rounded-full bg-white shadow transition-all ${
+              soundMuted ? 'left-1' : 'left-6'
+            }`}
+          />
+        </span>
+      </button>
 
       <p className="mt-6 text-center text-[11.5px] text-neutral-300">NamishOS Settings · Version 26</p>
     </div>
