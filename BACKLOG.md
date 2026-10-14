@@ -28,7 +28,7 @@ One item ships per daily commit. Every item below is a genuine, noticeable featu
 - [x] Custom wallpaper upload: use your own image as the desktop background, persisted in localStorage
 - [x] Battery popover: the menu bar battery icon shows the real charge level via the Battery API when available
 - [x] Sound effects: subtle clicks on window open/close and a boot chime, with a mute toggle in Settings
-- [ ] Verbose boot mode: optional boot log lines ("Mounting NamishHD...", "Calibrating determination...") during startup
+- [x] Verbose boot mode: optional boot log lines ("Mounting NamishHD...", "Calibrating determination...") during startup
 
 ## Notes, sharing, and portfolio power
 

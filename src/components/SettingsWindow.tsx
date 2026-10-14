@@ -1,7 +1,8 @@
 import { useState } from 'react'
-import { Check, ImagePlus, Loader2, Trash2, Volume2, VolumeX } from 'lucide-react'
+import { Check, ImagePlus, Loader2, Terminal, Trash2, Volume2, VolumeX } from 'lucide-react'
 import { useAppearance, type AccentColor, type SystemTheme, type TerminalTheme, type WallpaperVariant } from '@/os/Appearance'
 import { playWindowOpen, useSoundMuted } from '@/os/sound'
+import { useVerboseBoot } from '@/os/boot'
 import { WALLPAPER_IMAGES, WALLPAPER_META } from './Wallpaper'
 
 const VARIANTS: Exclude<WallpaperVariant, 'custom'>[] = ['tide', 'drift', 'ember']
@@ -85,6 +86,7 @@ export default function SettingsWindow() {
     setAccentColor,
   } = useAppearance()
   const [soundMuted, setSoundMuted] = useSoundMuted()
+  const [verboseBoot, setVerboseBoot] = useVerboseBoot()
   const [uploading, setUploading] = useState(false)
   const [uploadError, setUploadError] = useState<string | null>(null)
 
@@ -337,6 +339,48 @@ export default function SettingsWindow() {
           <span
             className={`absolute top-1 size-5 rounded-full bg-white shadow transition-all ${
               soundMuted ? 'left-1' : 'left-6'
+            }`}
+          />
+        </span>
+      </button>
+
+      <h2 className="mt-8 text-[15px] font-semibold text-neutral-900">Startup</h2>
+      <p className="mt-1 text-[12.5px] text-neutral-500">
+        Change what you see while NamishOS boots. Verbose mode takes effect on your next restart.
+      </p>
+
+      <button
+        onClick={() => setVerboseBoot(!verboseBoot)}
+        aria-pressed={verboseBoot}
+        className={`mt-4 flex w-full items-center gap-4 rounded-2xl border p-3 text-left transition-all ${
+          verboseBoot
+            ? 'border-sky-500/60 bg-sky-50'
+            : 'border-black/10 bg-black/[0.02] hover:bg-black/[0.05]'
+        }`}
+      >
+        <span
+          className={`flex size-10 shrink-0 items-center justify-center rounded-xl ${
+            verboseBoot ? 'bg-sky-500 text-white' : 'bg-neutral-200 text-neutral-500'
+          }`}
+        >
+          <Terminal size={18} />
+        </span>
+        <div className="min-w-0 flex-1">
+          <div className="text-[14px] font-semibold text-neutral-900">Verbose boot</div>
+          <div className="truncate text-[12px] text-neutral-500">
+            {verboseBoot
+              ? 'On. Startup scrolls a kernel-style boot log.'
+              : 'Off. Boot shows the calm NamishOS logo screen.'}
+          </div>
+        </div>
+        <span
+          className={`relative h-7 w-12 shrink-0 rounded-full transition-colors ${
+            verboseBoot ? 'bg-sky-500' : 'bg-neutral-300'
+          }`}
+        >
+          <span
+            className={`absolute top-1 size-5 rounded-full bg-white shadow transition-all ${
+              verboseBoot ? 'left-6' : 'left-1'
             }`}
           />
         </span>
