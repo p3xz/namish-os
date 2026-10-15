@@ -113,7 +113,7 @@ const DEFAULT_SIZE: Record<AppId, { w: number; h: number }> = {
   terminal: { w: 660, h: 430 },
   web: { w: 820, h: 540 },
   messages: { w: 760, h: 520 },
-  notes: { w: 440, h: 440 },
+  notes: { w: 620, h: 500 },
   about: { w: 500, h: 400 },
   settings: { w: 580, h: 430 },
   quicklook: { w: 580, h: 460 },
