@@ -18,6 +18,7 @@ import { useWindows } from '@/os/WindowManager'
 import { getFolderAt, homeFolder, textDocs, trashFolder, type FSEntry, type FSFile, type FSFolder } from '@/os/filesystem'
 import type { OSWindow, QuickLookItem } from '@/os/types'
 import { deepLinkFor } from '@/os/deeplinks'
+import { copyText } from '@/os/clipboard'
 import { profile, projects } from '@/data/portfolio'
 import MacFolder from './MacFolder'
 import { useContextMenu, type MenuEntry } from './ContextMenu'
@@ -318,25 +319,7 @@ export default function FinderWindow({ win }: { win: OSWindow }) {
 
   /** Copy a deep link that reopens this exact file or folder in NamishOS. */
   const copyEntryLink = async (entry: FSEntry) => {
-    const link = deepLinkFor([...path, entry.name])
-    try {
-      await navigator.clipboard.writeText(link)
-    } catch {
-      // Clipboard API unavailable (older browser or permissions). Fall back
-      // to the legacy execCommand path.
-      const ta = document.createElement('textarea')
-      ta.value = link
-      ta.style.position = 'fixed'
-      ta.style.opacity = '0'
-      document.body.appendChild(ta)
-      ta.select()
-      try {
-        document.execCommand('copy')
-      } catch {
-        // Last resort: the link is lost, nothing more we can do silently.
-      }
-      ta.remove()
-    }
+    await copyText(deepLinkFor([...path, entry.name]))
   }
 
   /** Right-click menu for a file or folder entry. */

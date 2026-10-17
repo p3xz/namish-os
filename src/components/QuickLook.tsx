@@ -1,6 +1,8 @@
-import { useCallback, useEffect, useRef } from 'react'
-import { ChevronLeft, ChevronRight, ExternalLink, FileCode2, Github } from 'lucide-react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { Check, ChevronLeft, ChevronRight, ExternalLink, FileCode2, Github, Link2 } from 'lucide-react'
 import { textDocs } from '@/os/filesystem'
+import { deepLinkFor } from '@/os/deeplinks'
+import { copyText } from '@/os/clipboard'
 import { profile, projects } from '@/data/portfolio'
 import { useWindows } from '@/os/WindowManager'
 import type { OSWindow } from '@/os/types'
@@ -43,8 +45,28 @@ function TextPreview({ docKey }: { docKey: string }) {
 
 function ProjectPreview({ id }: { id: string }) {
   const project = projects.find((p) => p.id === id)
+  const [copied, setCopied] = useState(false)
+  const resetTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // A fresh project gets a fresh button: never show a stale "Copied!".
+  useEffect(() => {
+    setCopied(false)
+    return () => {
+      if (resetTimer.current) clearTimeout(resetTimer.current)
+    }
+  }, [id])
+
   if (!project) return <p className="p-6 text-[13px] text-neutral-400">Project not found.</p>
   const d = project.details
+
+  /** Copy a deep link that reopens this exact project in Quick Look. */
+  const copyLink = async () => {
+    const ok = await copyText(deepLinkFor(['Projects', project.name]))
+    if (!ok) return
+    setCopied(true)
+    if (resetTimer.current) clearTimeout(resetTimer.current)
+    resetTimer.current = setTimeout(() => setCopied(false), 2000)
+  }
   return (
     <div className="selectable min-h-full bg-white p-6">
       <div className="flex items-start gap-4">
@@ -76,6 +98,13 @@ function ProjectPreview({ id }: { id: string }) {
       </div>
 
       <div className="mt-6 flex flex-wrap gap-2">
+        <button
+          onClick={copyLink}
+          className="inline-flex items-center gap-1.5 rounded-full bg-black/[0.06] px-4 py-2 text-[13px] font-semibold text-neutral-800 transition-transform hover:scale-[1.03]"
+        >
+          {copied ? <Check size={15} className="text-emerald-600" /> : <Link2 size={15} />}
+          {copied ? 'Copied!' : 'Copy link'}
+        </button>
         {project.repoUrl && (
           <a
             href={project.repoUrl}
