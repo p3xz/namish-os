@@ -44,7 +44,7 @@ export type FinderView = 'icons' | 'list' | 'gallery'
 
 /** One previewable item in a Quick Look slideshow. */
 export interface QuickLookItem {
-  kind: 'text' | 'project' | 'image' | 'contact'
+  kind: 'text' | 'project' | 'image' | 'contact' | 'resume'
   ref: string
   title: string
 }

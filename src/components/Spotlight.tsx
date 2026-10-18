@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import {
   Calculator,
   Code2,
+  FileDown,
   FileText,
   Folder,
   Globe,
@@ -32,7 +33,7 @@ import type { AppId } from '@/os/types'
 type SpotAction =
   | { type: 'app'; app: AppId }
   | { type: 'folder'; path: string[] }
-  | { type: 'quicklook'; kind: 'text' | 'project' | 'image' | 'contact'; ref: string; title: string }
+  | { type: 'quicklook'; kind: 'text' | 'project' | 'image' | 'contact' | 'resume'; ref: string; title: string }
   | { type: 'terminal'; command: string }
   | { type: 'settings' }
 
@@ -281,6 +282,8 @@ function SpotIcon({ icon, light = false }: { icon: string; light?: boolean }) {
       return <Code2 size={16} className={cls} />
     case 'contact':
       return <Mail size={16} className={cls} />
+    case 'resume':
+      return <FileDown size={16} className={cls} />
     default:
       return <Search size={16} className={cls} />
   }

@@ -1,6 +1,6 @@
 import { profile, skillGroups, projects, experience } from '@/data/portfolio'
 
-export type FileKind = 'text' | 'project' | 'image' | 'contact'
+export type FileKind = 'text' | 'project' | 'image' | 'contact' | 'resume'
 
 export interface FSFile {
   name: string
@@ -240,7 +240,10 @@ export const homeFolder: FSFolder = {
     {
       name: 'Contact',
       type: 'folder',
-      children: [{ name: 'contact.txt', type: 'file', kind: 'text', ref: 'contact' }],
+      children: [
+        { name: 'contact.txt', type: 'file', kind: 'text', ref: 'contact' },
+        { name: 'Resume.pdf', type: 'file', kind: 'resume', ref: 'resume' },
+      ],
     },
     {
       name: 'Legal',

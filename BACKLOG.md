@@ -35,4 +35,4 @@ One item ships per daily commit. Every item below is a genuine, noticeable featu
 - [x] Notes app becomes real: create, edit, and delete notes, persisted in localStorage
 - [x] Web app search box: type a query to search the web and open results in a new tab
 - [x] Share project links: every project Quick Look gets a "Copy link" button for sharing
-- [ ] Downloadable resume: generate a clean text/PDF resume from the portfolio data from the Contact folder
+- [x] Downloadable resume: generate a clean text/PDF resume from the portfolio data from the Contact folder

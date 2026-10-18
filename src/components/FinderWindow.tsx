@@ -21,6 +21,7 @@ import { deepLinkFor } from '@/os/deeplinks'
 import { copyText } from '@/os/clipboard'
 import { profile, projects } from '@/data/portfolio'
 import MacFolder from './MacFolder'
+import ResumePreview from './ResumePreview'
 import { useContextMenu, type MenuEntry } from './ContextMenu'
 
 /** Original document icon artwork, tinted by file kind. */
@@ -33,7 +34,9 @@ function FileIcon({ entry, size = 44 }: { entry: FSEntry; size?: number }) {
         ? '[ ]'
         : entry.kind === 'contact'
           ? '@'
-          : 'Aa'
+          : entry.kind === 'resume'
+            ? 'CV'
+            : 'Aa'
   return (
     <svg
       width={size}
@@ -79,6 +82,8 @@ function kindLabel(entry: FSEntry): string {
       return 'Image'
     case 'contact':
       return 'Contact'
+    case 'resume':
+      return 'PDF Document'
     default:
       return 'Text'
   }
@@ -207,6 +212,15 @@ function GalleryPreview({ entry }: { entry: FSEntry }) {
             <span>{project.category}</span>
           </div>
         </div>
+      </div>
+    )
+  }
+
+  // resume: paper-style preview with working download buttons
+  if (entry.kind === 'resume') {
+    return (
+      <div className="h-full overflow-y-auto">
+        <ResumePreview />
       </div>
     )
   }

@@ -6,6 +6,7 @@ import { copyText } from '@/os/clipboard'
 import { profile, projects } from '@/data/portfolio'
 import { useWindows } from '@/os/WindowManager'
 import type { OSWindow } from '@/os/types'
+import ResumePreview from './ResumePreview'
 
 function Autolink({ text }: { text: string }) {
   const parts = text.split(/(https?:\/\/[^\s)]+)/g)
@@ -269,6 +270,7 @@ export default function QuickLook({ win }: { win: OSWindow }) {
         </div>
       )}
       {ql.kind === 'contact' && <ContactPreview />}
+      {ql.kind === 'resume' && <ResumePreview />}
 
       {canSlide && (
         <>
